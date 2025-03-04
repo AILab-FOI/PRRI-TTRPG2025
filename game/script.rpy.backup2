@@ -1,0 +1,487 @@
+# Cover image
+
+image cover = "images/cover.png"
+
+# Characters
+define m = Character( "Moroa" )
+define b = Character( "Bugman" )
+define p = Character( "Pablo" )
+image moroa = "images/characters/moroa.png"
+image bugman = "images/characters/bugman.png"
+image pablo = "images/characters/pablo.png"
+
+# NPCs
+image starjesina_goran = "images/npcs/starjesina_goran.png"
+image djevojcica_s_luci_ana = "images/npcs/djevojcica_s_luci_ana.png"
+image malik_tintilinic = "images/npcs/malik_tintilinic.png"
+image prodavacica_mira = "images/npcs/prodavacica_mira.png"
+image strazari_podzemljari = "images/npcs/strazari_podzemljari.png"
+image becar_siljo = "images/npcs/becar_siljo.png"
+image kralj_zvone_i_kraljica_mare = "images/npcs/kralj_zvone_i_kraljica_mare.png"
+image carobnjak_ljubo = "images/npcs/carobnjak_ljubo.png"
+image prodavac_mrle = "images/npcs/prodavac_mrle.png"
+image regoc = "images/npcs/regoc.png"
+image kameni_vojnik = "images/npcs/kameni_vojnik.png"
+image kameni_vojnik_skamenjen = "images/npcs/kameni_vojnik_skamenjen.png"
+image kralj_vatroslav = "images/npcs/kralj_vatroslav.png"
+image kralj_vatroslav_skamenjen = "images/npcs/kralj_vatroslav_skamenjen.png"
+image vjestica_moruzgva = "images/npcs/vjestica_moruzgva.png"
+
+# Backgrounds
+image zelenac = "images/locations/zelenac.png"
+image trg = "images/locations/trg.png"
+image kuca_za_goste = "images/locations/kuca_za_goste.png"
+image ducan = "images/locations/ducan.png"
+image vazdazelena_suma = "images/locations/vazdazelena_suma.png"
+image vela_jela = "images/locations/vela_jela.png"
+image prolaz_u_podzemlje = "images/locations/prolaz_u_podzemlje.png"
+image grebengrad = "images/locations/grebengrad.png"
+image siljina_krcma = "images/locations/siljina_krcma.png"
+image mrletova_zeljezarija = "images/locations/mrletova_zeljezarija.png"
+image ljubina_radionica = "images/locations/ljubina_radionica.png"
+image crv = "images/locations/crv.png"
+image legen = "images/locations/legen.png"
+image moruzgvina_pecina = "images/locations/moruzgvina_pecina.png"
+image mazuran_kraj = "images/locations/mazuran_kraj.png"
+
+# Sound effects
+define snd = ""
+
+init python:
+    def play_sound_effect():
+        renpy.sound.play( snd )
+
+screen custom_listener():
+    key "K_z" action [ Function( play_sound_effect ) ]
+
+
+
+label start:
+    show screen custom_listener
+    python:
+        import json
+        cscn = " "
+        cshw = [ "", "", "" ]
+        pos = 0
+    jump next
+
+label next:
+    python:
+        import json
+
+        with renpy.open_file( 'next.json' ) as file:
+            data = json.load( file )
+
+        # Set the variables based on the JSON data
+        scn = data[ "scene" ]
+        shw = data[ "show" ]
+        bgm = "audio/bcgsound/" + data[ "bgm" ] + ".mp3"
+        snd = "audio/soundeffects/" + data[ "sound" ] + ".mp3"
+
+    # SOUND
+    play music bgm if_changed
+    
+    # SCENES
+
+    if scn == "zelenac" and cscn != "zelenac":
+        jump zelenac
+    if scn == "trg" and cscn != "trg":
+        jump trg
+    if scn == "kuca_za_goste" and cscn != "kuca_za_goste":
+        jump kuca_za_goste
+    if scn == "ducan" and cscn != "ducan":
+        jump ducan
+    if scn == "vazdazelena_suma" and cscn != "vazdazelena_suma":
+        jump vazdazelena_suma
+    if scn == "vela_jela" and cscn != "vela_jela":
+        jump vela_jela
+    if scn == "prolaz_u_podzemlje" and cscn != "prolaz_u_podzemlje":
+        jump prolaz_u_podzemlje
+    if scn == "grebengrad" and cscn != "grebengrad":
+        jump grebengrad
+    if scn == "siljina_krcma" and cscn != "siljina_krcma":
+        jump siljina_krcma
+    if scn == "mrletova_zeljezarija" and cscn != "mrletova_zeljezarija":
+        jump mrletova_zeljezarija
+    if scn == "ljubina_radionica" and cscn != "ljubina_radionica":
+        jump ljubina_radionica
+    if scn == "crv" and cscn != "crv":
+        jump crv
+    if scn == "legen" and cscn != "legen":
+        jump legen
+    if scn == "moruzgvina_pecina" and cscn != "moruzgvina_pecina":
+        jump moruzgvina_pecina
+    if scn == "mazuran_kraj" and cscn != "mazuran_kraj":
+        jump mazuran_kraj
+
+    if "moroa" in shw and "moroa" not in cshw:
+        jump moroa
+    if "bugman" in shw and "bugman" not in cshw:
+        jump bugman
+    if "pablo" in shw and "pablo" not in cshw:
+        jump pablo
+    if "starjesina_goran" in shw and "starjesina_goran" not in cshw:
+        jump starjesina_goran
+    if "djevojcica_s_luci_ana" in shw and "djevojcica_s_luci_ana" not in cshw:
+        jump djevojcica_s_luci_ana
+    if "malik_tintilinic" in shw and "malik_tintilinic" not in cshw:
+        jump malik_tintilinic
+    if "prodavacica_mira" in shw and "prodavacica_mira" not in cshw:
+        jump prodavacica_mira
+    if "strazari_podzemljari" in shw and "strazari_podzemljari" not in cshw:
+        jump strazari_podzemljari
+    if "becar_siljo" in shw and "becar_siljo" not in cshw:
+        jump becar_siljo
+    if "kralj_zvone_i_kraljica_mare" in shw and "kralj_zvone_i_kraljica_mare" not in cshw:
+        jump kralj_zvone_i_kraljica_mare
+    if "carobnjak_ljubo" in shw and "carobnjak_ljubo" not in cshw:
+        jump carobnjak_ljubo
+    if "prodavac_mrle" in shw and "prodavac_mrle" not in cshw:
+        jump prodavac_mrle
+    if "regoc" in shw and "regoc" not in cshw:
+        jump regoc
+    if "kameni_vojnik" in shw and "kameni_vojnik" not in cshw:
+        jump kameni_vojnik
+    if "kameni_vojnik_skamenjen" in shw and "kameni_vojnik_skamenjen" not in cshw:
+        jump kameni_vojnik_skamenjen
+    if "kralj_vatroslav" in shw and "kralj_vatroslav" not in cshw:
+        jump kralj_vatroslav
+    if "kralj_vatroslav_skamenjen" in shw and "kralj_vatroslav_skamenjen" not in cshw:
+        jump kralj_vatroslav_skamenjen
+    if "vjestica_moruzgva" in shw and "vjestica_moruzgva" not in cshw:
+        jump vjestica_moruzgva
+
+    $ renpy.pause ()
+
+
+# SCENE LABELS
+
+label zelenac:
+    $ cscn = "zelenac"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene zelenac
+    jump next
+
+label trg:
+    $ cscn = "trg"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene trg
+    jump next
+
+label kuca_za_goste:
+    $ cscn = "kuca_za_goste"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene kuca_za_goste
+    jump next
+
+label ducan:
+    $ cscn = "ducan"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene ducan
+    jump next
+
+label vazdazelena_suma:
+    $ cscn = "vazdazelena_suma"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene vazdazelena_suma
+    jump next
+
+label vela_jela:
+    $ cscn = "vela_jela"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene vela_jela
+    jump next
+
+label prolaz_u_podzemlje:
+    $ cscn = "prolaz_u_podzemlje"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene prolaz_u_podzemlje
+    jump next
+
+label grebengrad:
+    $ cscn = "grebengrad"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene grebengrad
+    jump next
+
+label siljina_krcma:
+    $ cscn = "siljina_krcma"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene siljina_krcma
+    jump next
+
+label mrletova_zeljezarija:
+    $ cscn = "mrletova_zeljezarija"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene mrletova_zeljezarija
+    jump next
+
+label ljubina_radionica:
+    $ cscn = "ljubina_radionica"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene ljubina_radionica
+    jump next
+
+label crv:
+    $ cscn = "crv"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene crv
+    jump next
+
+label legen:
+    $ cscn = "legen"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene legen
+    jump next
+
+label moruzgvina_pecina:
+    $ cscn = "moruzgvina_pecina"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene moruzgvina_pecina
+    jump next
+
+label mazuran_kraj:
+    $ cscn = "mazuran_kraj"
+    $ pos = 0
+    $ cshw = [ "", "", "" ]
+    scene mazuran_kraj
+    jump next
+
+
+# CHARACTER AND NPC LABELS
+
+label moroa:
+    $ cshw[ pos ] = "moroa"
+    if pos == 0:
+        show moroa with dissolve 
+    elif pos == 1:
+        show moroa at left with moveinleft
+    elif pos == 2:
+        show moroa at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label bugman:
+    $ cshw[ pos ] = "bugman"
+    if pos == 0:
+        show bugman with dissolve 
+    elif pos == 1:
+        show bugman at left with moveinleft
+    elif pos == 2:
+        show bugman at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label pablo:
+    $ cshw[ pos ] = "pablo"
+    if pos == 0:
+        show pablo with dissolve 
+    elif pos == 1:
+        show pablo at left with moveinleft
+    elif pos == 2:
+        show pablo at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label starjesina_goran:
+    $ cshw[ pos ] = "starjesina_goran"
+    if pos == 0:
+        show starjesina_goran with dissolve 
+    elif pos == 1:
+        show starjesina_goran at left with moveinleft
+    elif pos == 2:
+        show starjesina_goran at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label djevojcica_s_luci_ana:
+    $ cshw[ pos ] = "djevojcica_s_luci_ana"
+    if pos == 0:
+        show djevojcica_s_luci_ana with dissolve 
+    elif pos == 1:
+        show djevojcica_s_luci_ana at left with moveinleft
+    elif pos == 2:
+        show djevojcica_s_luci_ana at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label malik_tintilinic:
+    $ cshw[ pos ] = "malik_tintilinic"
+    if pos == 0:
+        show malik_tintilinic with dissolve 
+    elif pos == 1:
+        show malik_tintilinic at left with moveinleft
+    elif pos == 2:
+        show malik_tintilinic at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label prodavacica_mira:
+    $ cshw[ pos ] = "prodavacica_mira"
+    if pos == 0:
+        show prodavacica_mira with dissolve 
+    elif pos == 1:
+        show prodavacica_mira at left with moveinleft
+    elif pos == 2:
+        show prodavacica_mira at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label strazari_podzemljari:
+    $ cshw[ pos ] = "strazari_podzemljari"
+    if pos == 0:
+        show strazari_podzemljari with dissolve 
+    elif pos == 1:
+        show strazari_podzemljari at left with moveinleft
+    elif pos == 2:
+        show strazari_podzemljari at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label becar_siljo:
+    $ cshw[ pos ] = "becar_siljo"
+    if pos == 0:
+        show becar_siljo with dissolve 
+    elif pos == 1:
+        show becar_siljo at left with moveinleft
+    elif pos == 2:
+        show becar_siljo at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label kralj_zvone_i_kraljica_mare:
+    $ cshw[ pos ] = "kralj_zvone_i_kraljica_mare"
+    if pos == 0:
+        show kralj_zvone_i_kraljica_mare with dissolve 
+    elif pos == 1:
+        show kralj_zvone_i_kraljica_mare at left with moveinleft
+    elif pos == 2:
+        show kralj_zvone_i_kraljica_mare at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label carobnjak_ljubo:
+    $ cshw[ pos ] = "carobnjak_ljubo"
+    if pos == 0:
+        show carobnjak_ljubo with dissolve 
+    elif pos == 1:
+        show carobnjak_ljubo at left with moveinleft
+    elif pos == 2:
+        show carobnjak_ljubo at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label prodavac_mrle:
+    $ cshw[ pos ] = "prodavac_mrle"
+    if pos == 0:
+        show prodavac_mrle with dissolve 
+    elif pos == 1:
+        show prodavac_mrle at left with moveinleft
+    elif pos == 2:
+        show prodavac_mrle at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label regoc:
+    $ cshw[ pos ] = "regoc"
+    if pos == 0:
+        show regoc with dissolve 
+    elif pos == 1:
+        show regoc at left with moveinleft
+    elif pos == 2:
+        show regoc at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label kameni_vojnik:
+    $ cshw[ pos ] = "kameni_vojnik"
+    if pos == 0:
+        show kameni_vojnik with dissolve 
+    elif pos == 1:
+        show kameni_vojnik at left with moveinleft
+    elif pos == 2:
+        show kameni_vojnik at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label kameni_vojnik_skamenjen:
+    $ cshw[ pos ] = "kameni_vojnik_skamenjen"
+    if pos == 0:
+        show kameni_vojnik_skamenjen with dissolve 
+    elif pos == 1:
+        show kameni_vojnik_skamenjen at left with moveinleft
+    elif pos == 2:
+        show kameni_vojnik_skamenjen at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label kralj_vatroslav:
+    $ cshw[ pos ] = "kralj_vatroslav"
+    if pos == 0:
+        show kralj_vatroslav with dissolve 
+    elif pos == 1:
+        show kralj_vatroslav at left with moveinleft
+    elif pos == 2:
+        show kralj_vatroslav at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label kralj_vatroslav_skamenjen:
+    $ cshw[ pos ] = "kralj_vatroslav_skamenjen"
+    if pos == 0:
+        show kralj_vatroslav_skamenjen with dissolve 
+    elif pos == 1:
+        show kralj_vatroslav_skamenjen at left with moveinleft
+    elif pos == 2:
+        show kralj_vatroslav_skamenjen at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label vjestica_moruzgva:
+    $ cshw[ pos ] = "vjestica_moruzgva"
+    if pos == 0:
+        show vjestica_moruzgva with dissolve 
+    elif pos == 1:
+        show vjestica_moruzgva at left with moveinleft
+    elif pos == 2:
+        show vjestica_moruzgva at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+
+# END LABEL
+
+label end:
+    return
