@@ -80,8 +80,8 @@ class Application(tk.Tk):
         self.create_option_frame("Background music", self.selected_bgm, self.config_data['Background music'])
 
         # OK Button
-        ttk.Button(self, text="OK", command=self.on_ok).pack( side="left" )
-        ttk.Button(self, text="Run game", command=self.on_run).pack( side="right" )
+        ttk.Button(self, text="OK", command=self.on_ok).pack( side="right" )
+        ttk.Button(self, text="Run game", command=self.on_run).pack( side="left" )
 
     def create_check_frame(self, title, variable_dict, options):
         frame = ttk.LabelFrame(self, text=title)
