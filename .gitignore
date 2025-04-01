@@ -354,3 +354,4 @@ text/textsupport.pyi
 text/texwrap.pyi
 uguu/gl.pyi
 uguu/uguu.pyi
+OpenAI/config.json
