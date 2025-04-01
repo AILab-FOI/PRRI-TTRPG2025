@@ -2,7 +2,7 @@
 import os
 import openai
 openai.api_key = ""
-system_prompt = "You have a role of a Dungeon Master assistent. Your task is to provide the Dungeon master with necessary info that he needs, in most cases that will be a backstory of a character, based on the description that the dungeon master gives you it is up to you to to give them a backstory and necessary details as to what the character is like, their attribues what they like and so on."
+system_prompt = "You have a role of a Dungeon Master assistent. Your task is to provide the Dungeon master with necessary info that he needs, in most cases that will be a backstory of a character, based on the description that the dungeon master gives you it is up to you to give them a backstory and necessary details as to what the character is like, their attribues, flaws, what they like and dont like and so on."
 
 prompt = sys.stdin.read().strip()
 if prompt:
