@@ -111,7 +111,8 @@ class Application(tk.Tk):
         #self.quit()
 
     def on_run(self):
-        subprocess.Popen( [ "renpy", os.getcwd() ] )
+        # OVDJE STAVITE PUTANJU DO RENPYA
+        subprocess.Popen( [ "/home/yogurt/Downloads/renpy-8.3.7-sdk/renpy.sh", os.getcwd() ] )
 
 # Run the application
 if __name__ == "__main__":

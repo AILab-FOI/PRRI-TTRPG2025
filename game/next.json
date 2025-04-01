@@ -1,9 +1,6 @@
 {
     "scene": "brod",
-    "show": [
-        "kralj_dante",
-        "pablo"
-    ],
+    "show": [],
     "sound": "",
     "bgm": "_silence"
 }
