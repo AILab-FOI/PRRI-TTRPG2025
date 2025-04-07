@@ -64,6 +64,11 @@ class Application(tk.Tk):
 
         self.create_frames()
 
+    def refresh_ui(self):
+        for widget in self.winfo_children():
+            widget.destroy()
+        self.create_frames()
+
     def create_frames(self):
         # Top frames
         self.create_option_frame("Backgrounds", self.selected_scene, self.config_data['Backgrounds'])
