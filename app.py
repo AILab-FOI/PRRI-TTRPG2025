@@ -53,6 +53,10 @@ class Application(tk.Tk):
         self.title("Game Configuration")
         self.config_data = config_data
 
+         # refernece koje se koriste za refreshanje (trenutno iskljuceno)
+       # self.send_window = None
+       # self.send_text_area = None
+
         self.style = ttk.Style()
         self.style.theme_use('clam')  # or try 'clam', 'alt', 'default', 'classic' etc.
 
@@ -82,6 +86,9 @@ class Application(tk.Tk):
         # Frame za unos teksta i gumb "Send" mora bit točno tu!!!
         bottom_frame = ttk.Frame(self)
         bottom_frame.pack(side="bottom", fill="x", padx=10, pady=10)
+
+        label = ttk.Label(bottom_frame, text="Pitanje za AI:")
+        label.pack(anchor="w", pady=(0, 5))
 
         self.text_input = tk.Text(bottom_frame, height=3, wrap="word")
         self.text_input.pack(side="left", expand=True, fill="both", padx=(0, 10))
@@ -126,10 +133,21 @@ class Application(tk.Tk):
         subprocess.Popen( [ "/home/yogurt/Downloads/renpy-8.3.7-sdk/renpy.sh", os.getcwd() ] )
     
     def on_send(self):
+
+          # Ako je prozor već otvoren
+    # if self.send_window and self.send_window.winfo_exists():
+     #   self.send_text_area.insert("end", f"Upit: {tekstZaGpt}\n\n")
+      #  self.send_text_area.see("end")  # automatski scroll na kraj
+    # else:
+        # Otvori novi prozor
+      #  self.send_window = tk.Toplevel(self)
+       # self.send_window.title("Send Prozor")
+       # self.send_window.geometry("400x300")
+       
         # Otvori novi prozor (dimanzije se mogu povećati)
         new_window = tk.Toplevel(self)
-        new_window.title("Send Prozor")
-        new_window.geometry("400x300")
+        new_window.title("Odgovor AI-a")
+        new_window.geometry("500x400")
 
         # Frame koji sadrži tekst i scrollbar (primitivno al radi) 
         frame = ttk.Frame(new_window)
