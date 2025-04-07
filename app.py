@@ -79,6 +79,17 @@ class Application(tk.Tk):
         # Background music frame
         self.create_option_frame("Background music", self.selected_bgm, self.config_data['Background music'])
 
+        # Frame za unos teksta i gumb "Send" mora bit točno tu!!!
+        bottom_frame = ttk.Frame(self)
+        bottom_frame.pack(side="bottom", fill="x", padx=10, pady=10)
+
+        self.text_input = tk.Text(bottom_frame, height=3, wrap="word")
+        self.text_input.pack(side="left", expand=True, fill="both", padx=(0, 10))
+
+        send_button = ttk.Button(bottom_frame, text="Send", command=self.on_send)
+        send_button.pack(side="right")
+
+
         # OK Button
         ttk.Button(self, text="OK", command=self.on_ok).pack( side="right" )
         ttk.Button(self, text="Run game", command=self.on_run).pack( side="left" )
@@ -113,6 +124,31 @@ class Application(tk.Tk):
     def on_run(self):
         # OVDJE STAVITE PUTANJU DO RENPYA
         subprocess.Popen( [ "/home/yogurt/Downloads/renpy-8.3.7-sdk/renpy.sh", os.getcwd() ] )
+    
+    def on_send(self):
+        # Otvori novi prozor (dimanzije se mogu povećati)
+        new_window = tk.Toplevel(self)
+        new_window.title("Send Prozor")
+        new_window.geometry("400x300")
+
+        # Frame koji sadrži tekst i scrollbar (primitivno al radi) 
+        frame = ttk.Frame(new_window)
+        frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Scrollbar (nemoj mjenjat)
+        scrollbar = ttk.Scrollbar(frame)
+        scrollbar.pack(side="right", fill="y")
+
+        # Text widget s povezanim scrollbarom
+        text_area = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
+        text_area.pack(side="left", fill="both", expand=True)
+
+        #scrollbar s text widgetom je tu povezan
+        scrollbar.config(command=text_area.yview)
+
+        # Ubaci uneseni tekst, ovo će se kasnije prosljediti 
+        tekstZaGpt = self.text_input.get("1.0", "end").strip()
+        text_area.insert("1.0", tekstZaGpt)
 
 # Run the application
 if __name__ == "__main__":
