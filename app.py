@@ -53,9 +53,9 @@ class Application(tk.Tk):
         self.title("Game Configuration")
         self.config_data = config_data
 
-         # refernece koje se koriste za refreshanje (trenutno iskljuceno)
-       # self.send_window = None
-       # self.send_text_area = None
+       # refernece koje se koriste za refreshanje (nemoj micat nigdje/uključeno)
+        self.send_window = None
+        self.send_text_area = None
 
         self.style = ttk.Style()
         self.style.theme_use('clam')  # or try 'clam', 'alt', 'default', 'classic' etc.
@@ -133,40 +133,31 @@ class Application(tk.Tk):
         subprocess.Popen( [ "/home/yogurt/Downloads/renpy-8.3.7-sdk/renpy.sh", os.getcwd() ] )
     
     def on_send(self):
-
-          # Ako je prozor već otvoren
-    # if self.send_window and self.send_window.winfo_exists():
-     #   self.send_text_area.insert("end", f"Upit: {tekstZaGpt}\n\n")
-      #  self.send_text_area.see("end")  # automatski scroll na kraj
-    # else:
+     tekstZaGpt = self.text_input.get("1.0", "end").strip()
+     if not tekstZaGpt:
+        return  # ne radi ništa ako je polje prazno (mora bit tu inače ne radi?!) 
+     
+     if self.send_window and self.send_window.winfo_exists():
+        # Ako prozor već postoji, dodaj novi tekst i zadrži stari
+        self.send_text_area.insert("end", f"\n\nUpit: {tekstZaGpt}")
+        self.send_text_area.see("end")  # scroll na dno kad se refresha
+     else:
         # Otvori novi prozor
-      #  self.send_window = tk.Toplevel(self)
-       # self.send_window.title("Send Prozor")
-       # self.send_window.geometry("400x300")
-       
-        # Otvori novi prozor (dimanzije se mogu povećati)
-        new_window = tk.Toplevel(self)
-        new_window.title("Odgovor AI-a")
-        new_window.geometry("500x400")
+        self.send_window = tk.Toplevel(self)
+        self.send_window.title("Odgovor AI-a")
+        self.send_window.geometry("500x400")
 
-        # Frame koji sadrži tekst i scrollbar (primitivno al radi) 
-        frame = ttk.Frame(new_window)
+        frame = ttk.Frame(self.send_window)
         frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-        # Scrollbar (nemoj mjenjat)
-        scrollbar = ttk.Scrollbar(frame)
+        scrollbar = ttk.Scrollbar(frame) #malo promjenjeni scroll ali radi
         scrollbar.pack(side="right", fill="y")
 
-        # Text widget s povezanim scrollbarom
-        text_area = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
-        text_area.pack(side="left", fill="both", expand=True)
+        self.send_text_area = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
+        self.send_text_area.pack(side="left", fill="both", expand=True)
+        scrollbar.config(command=self.send_text_area.yview)
 
-        #scrollbar s text widgetom je tu povezan
-        scrollbar.config(command=text_area.yview)
-
-        # Ubaci uneseni tekst, ovo će se kasnije prosljediti 
-        tekstZaGpt = self.text_input.get("1.0", "end").strip()
-        text_area.insert("1.0", tekstZaGpt)
+        self.send_text_area.insert("1.0", f"Upit: {tekstZaGpt}")
 
 # Run the application
 if __name__ == "__main__":
