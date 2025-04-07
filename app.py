@@ -183,9 +183,6 @@ class Application(tk.Tk):
         subprocess.Popen([ "../renpy-8.3.7-sdk/renpy.sh", os.getcwd() ])
 
     def on_send(self):
-        new_window = tk.Toplevel(self)
-        new_window.title("Odgovor AI-a")
-        new_window.geometry("500x400")
         tekstZaGpt = self.text_input.get("1.0", "end").strip()
         if not tekstZaGpt:
             return  # ne radi ništa ako je polje prazno (mora bit tu inače ne radi?!) 
@@ -200,7 +197,6 @@ class Application(tk.Tk):
             self.send_window.title("Odgovor AI-a")
             self.send_window.geometry("500x400")
 
-            frame = ttk.Frame(new_window)
             frame = ttk.Frame(self.send_window)
             frame.pack(fill="both", expand=True, padx=10, pady=10)
 
