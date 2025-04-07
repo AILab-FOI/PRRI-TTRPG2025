@@ -183,6 +183,7 @@ class Application(tk.Tk):
         subprocess.Popen([ "../renpy-8.3.7-sdk/renpy.sh", os.getcwd() ])
 
     def on_send(self):
+        odgovorOdGpt = 'placeholder_odgovor'
         tekstZaGpt = self.text_input.get("1.0", "end").strip()
         if not tekstZaGpt:
             return  # ne radi ništa ako je polje prazno (mora bit tu inače ne radi?!) 
@@ -190,6 +191,7 @@ class Application(tk.Tk):
         if self.send_window and self.send_window.winfo_exists():
             # Ako prozor već postoji, dodaj novi tekst i zadrži stari
             self.send_text_area.insert("end", f"\n\nUpit: {tekstZaGpt}")
+            self.send_text_area.insert("end", f"\n{odgovorOdGpt}")
             self.send_text_area.see("end")  # scroll na dno kad se refresha
         else:
             # Otvori novi prozor
@@ -200,7 +202,6 @@ class Application(tk.Tk):
             frame = ttk.Frame(self.send_window)
             frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-            scrollbar = ttk.Scrollbar(frame)
             scrollbar = ttk.Scrollbar(frame) #malo promjenjeni scroll ali radi
             scrollbar.pack(side="right", fill="y")
 
@@ -212,9 +213,9 @@ class Application(tk.Tk):
 
             scrollbar.config(command=text_area.yview)
 
-            self.send_text_area.insert("1.0", f"Upit: {tekstZaGpt}")
+            self.send_text_area.insert("1.0", f"Upit: {tekstZaGpt}\n")
             tekstZaGpt = self.text_input.get("1.0", "end").strip()
-            text_area.insert("1.0", tekstZaGpt)
+            self.send_text_area.insert("end", f"{odgovorOdGpt}")
 
 # Run the application
 if __name__ == "__main__":
