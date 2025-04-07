@@ -69,6 +69,48 @@ class Application(tk.Tk):
             widget.destroy()
         self.create_frames()
 
+    def insert_file(self, section_name):
+        file_path = filedialog.askopenfilename(title="Odaberi datoteku")
+        if file_path:
+            self.add_item_to_section(section_name, file_path)
+
+    def add_item_to_section(self, section_name, file_path):
+        # Dohvati path
+        name = os.path.splitext(os.path.basename(file_path))[0]
+
+        # Dodaj u config_data
+        self.config_data[section_name].append(name)
+
+
+        # Postavi datoteku u odredjenu mapu
+        # Definiraj mapu sekcija i njihovih putanja
+        section_paths = {
+            "Characters": os.path.join("game", "images", "characters"),
+            "NPCs": os.path.join("game", "images", "npcs"),
+            "Backgrounds": os.path.join("game", "images", "locations"),
+        }
+
+        # Provjera postoji li odgovarajuci put
+        if section_name in section_paths:
+            dest_dir = section_paths[section_name]
+            dest = os.path.join(dest_dir, os.path.basename(file_path))
+
+            # Provjera da li datoteka već postoji
+            if os.path.exists(dest):
+                tk.messagebox.showwarning("Datoteka već postoji", f"Datoteka {os.path.basename(file_path)} već postoji u {dest_dir}.")
+                return
+
+            os.makedirs(dest_dir, exist_ok=True)
+            shutil.copy(file_path, dest)
+
+
+        # Ovo slozi da bude checkbox
+        if section_name in ["Characters", "NPCs"]:
+            self.selected_show[name] = tk.BooleanVar()
+
+        # Refresh
+        self.refresh_ui()
+
     def create_frames(self):
         # Top frames
         self.create_option_frame("Backgrounds", self.selected_scene, self.config_data['Backgrounds'])
