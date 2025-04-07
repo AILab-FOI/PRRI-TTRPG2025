@@ -1,10 +1,6 @@
 {
-    "scene": "vijecnica",
-    "show": [
-        "cuvar_bruno",
-        "kuhar_branko_skockani",
-        "marina_mala"
-    ],
+    "scene": "brod",
+    "show": [],
     "sound": "",
     "bgm": "_silence"
 }

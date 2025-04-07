@@ -1,8 +1,9 @@
-#!/usr/bin/env python3
 import tkinter as tk
 import json
 from tkinter import ttk
-import pygame  # Import pygame for playing sound
+from tkinter import filedialog
+import shutil
+import pygame
 import os
 import subprocess
 
@@ -53,10 +54,6 @@ class Application(tk.Tk):
         self.title("Game Configuration")
         self.config_data = config_data
 
-         # refernece koje se koriste za refreshanje (trenutno iskljuceno)
-       # self.send_window = None
-       # self.send_text_area = None
-
         self.style = ttk.Style()
         self.style.theme_use('clam')  # or try 'clam', 'alt', 'default', 'classic' etc.
 
@@ -68,22 +65,14 @@ class Application(tk.Tk):
         self.create_frames()
 
     def create_frames(self):
-        # Backgrounds frame
+        # Top frames
         self.create_option_frame("Backgrounds", self.selected_scene, self.config_data['Backgrounds'])
-
-        # Characters frame
         self.create_check_frame("Characters", self.selected_show, self.config_data['Characters'])
-
-        # NPCs frame
         self.create_check_frame("NPCs", self.selected_show, self.config_data['NPCs'])
-
-        # Sound Effects frame - updated to create buttons
         self.create_sound_effects_frame("Sound Effects", self.config_data['Sound effects'])
-
-        # Background music frame
         self.create_option_frame("Background music", self.selected_bgm, self.config_data['Background music'])
 
-        # Frame za unos teksta i gumb "Send" mora bit točno tu!!!
+        # Bottom frame
         bottom_frame = ttk.Frame(self)
         bottom_frame.pack(side="bottom", fill="x", padx=10, pady=10)
 
@@ -96,16 +85,20 @@ class Application(tk.Tk):
         send_button = ttk.Button(bottom_frame, text="Send", command=self.on_send)
         send_button.pack(side="right")
 
-
         # OK Button
-        ttk.Button(self, text="OK", command=self.on_ok).pack( side="right" )
-        ttk.Button(self, text="Run game", command=self.on_run).pack( side="left" )
+        ttk.Button(self, text="OK", command=self.on_ok).pack(side="right")
+        ttk.Button(self, text="Run game", command=self.on_run).pack(side="left")
 
     def create_check_frame(self, title, variable_dict, options):
         frame = ttk.LabelFrame(self, text=title)
-        frame.pack(fill='both', expand=True)
+        frame.pack(fill='both', expand=True, pady=10)
+
         for i, option in enumerate(options):
             ttk.Checkbutton(frame, text=option, variable=variable_dict[option]).grid(row=i // 4, column=i % 4, sticky='w')
+
+        # Umetni gumb
+        insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
+        insert_button.grid(row=(len(options) // 4) + 1, column=0, sticky='w', pady=5)
 
     def create_option_frame(self, title, variable, options):
         frame = ttk.LabelFrame(self, text=title)
@@ -113,12 +106,20 @@ class Application(tk.Tk):
         for i, option in enumerate(options):
             ttk.Radiobutton(frame, text=option, variable=variable, value=option).grid(row=i // 4, column=i % 4, sticky='w')
 
+        # Umetni gumb
+        insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
+        insert_button.grid(row=(len(options) // 4) + 1, column=0, sticky='w', pady=5)
+
     def create_sound_effects_frame(self, title, options):
         frame = ttk.LabelFrame(self, text=title)
         frame.pack(fill='both', expand=True)
         for i, option in enumerate(options):
             button = ttk.Button(frame, text=option, command=lambda opt=option: self.on_sound_button_click(opt))
             button.grid(row=i // 4, column=i % 4, sticky='w')
+        
+        # Umetni gumb
+        insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
+        insert_button.grid(row=(len(options) // 4) + 1, column=0, sticky='w', pady=5)
 
     def on_sound_button_click(self, sound_name):
         self.selected_sound = sound_name  # Update the selected_sound with the clicked sound's name
@@ -126,45 +127,26 @@ class Application(tk.Tk):
 
     def on_ok(self):
         write_json(self.selected_scene, self.selected_show, self.selected_sound, self.selected_bgm)
-        #self.quit()
 
     def on_run(self):
-        # OVDJE STAVITE PUTANJU DO RENPYA
-        subprocess.Popen( [ "/home/yogurt/Downloads/renpy-8.3.7-sdk/renpy.sh", os.getcwd() ] )
-    
-    def on_send(self):
+        subprocess.Popen([ "../renpy-8.3.7-sdk/renpy.sh", os.getcwd() ])
 
-          # Ako je prozor već otvoren
-    # if self.send_window and self.send_window.winfo_exists():
-     #   self.send_text_area.insert("end", f"Upit: {tekstZaGpt}\n\n")
-      #  self.send_text_area.see("end")  # automatski scroll na kraj
-    # else:
-        # Otvori novi prozor
-      #  self.send_window = tk.Toplevel(self)
-       # self.send_window.title("Send Prozor")
-       # self.send_window.geometry("400x300")
-       
-        # Otvori novi prozor (dimanzije se mogu povećati)
+    def on_send(self):
         new_window = tk.Toplevel(self)
         new_window.title("Odgovor AI-a")
         new_window.geometry("500x400")
 
-        # Frame koji sadrži tekst i scrollbar (primitivno al radi) 
         frame = ttk.Frame(new_window)
         frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-        # Scrollbar (nemoj mjenjat)
         scrollbar = ttk.Scrollbar(frame)
         scrollbar.pack(side="right", fill="y")
 
-        # Text widget s povezanim scrollbarom
         text_area = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
         text_area.pack(side="left", fill="both", expand=True)
 
-        #scrollbar s text widgetom je tu povezan
         scrollbar.config(command=text_area.yview)
 
-        # Ubaci uneseni tekst, ovo će se kasnije prosljediti 
         tekstZaGpt = self.text_input.get("1.0", "end").strip()
         text_area.insert("1.0", tekstZaGpt)
 
@@ -183,4 +165,3 @@ if __name__ == "__main__":
     config = parse_config('interface.conf')
     app = Application(config)
     app.mainloop()
-
