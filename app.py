@@ -54,6 +54,10 @@ class Application(tk.Tk):
         self.title("Game Configuration")
         self.config_data = config_data
 
+       # refernece koje se koriste za refreshanje (nemoj micat nigdje/uključeno)
+        self.send_window = None
+        self.send_text_area = None
+
         self.style = ttk.Style()
         self.style.theme_use('clam')  # or try 'clam', 'alt', 'default', 'classic' etc.
 
@@ -182,18 +186,37 @@ class Application(tk.Tk):
         new_window = tk.Toplevel(self)
         new_window.title("Odgovor AI-a")
         new_window.geometry("500x400")
+     tekstZaGpt = self.text_input.get("1.0", "end").strip()
+     if not tekstZaGpt:
+        return  # ne radi ništa ako je polje prazno (mora bit tu inače ne radi?!) 
+     
+     if self.send_window and self.send_window.winfo_exists():
+        # Ako prozor već postoji, dodaj novi tekst i zadrži stari
+        self.send_text_area.insert("end", f"\n\nUpit: {tekstZaGpt}")
+        self.send_text_area.see("end")  # scroll na dno kad se refresha
+     else:
+        # Otvori novi prozor
+        self.send_window = tk.Toplevel(self)
+        self.send_window.title("Odgovor AI-a")
+        self.send_window.geometry("500x400")
 
         frame = ttk.Frame(new_window)
+        frame = ttk.Frame(self.send_window)
         frame.pack(fill="both", expand=True, padx=10, pady=10)
 
         scrollbar = ttk.Scrollbar(frame)
+        scrollbar = ttk.Scrollbar(frame) #malo promjenjeni scroll ali radi
         scrollbar.pack(side="right", fill="y")
 
+        self.send_text_area = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
+        self.send_text_area.pack(side="left", fill="both", expand=True)
+        scrollbar.config(command=self.send_text_area.yview)
         text_area = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
         text_area.pack(side="left", fill="both", expand=True)
 
         scrollbar.config(command=text_area.yview)
 
+        self.send_text_area.insert("1.0", f"Upit: {tekstZaGpt}")
         tekstZaGpt = self.text_input.get("1.0", "end").strip()
         text_area.insert("1.0", tekstZaGpt)
 
