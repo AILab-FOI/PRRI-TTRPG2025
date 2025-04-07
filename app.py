@@ -138,7 +138,7 @@ class Application(tk.Tk):
         return  # ne radi ništa ako je polje prazno (mora bit tu inače ne radi?!) 
      
      if self.send_window and self.send_window.winfo_exists():
-        # Ako prozor već postoji, dodaj novi tekst i zadrži stari
+        # Ako prozor već postoji, dodaj novi tekst i zadrži stari, trebalo bi radit i kad se upisuje tekst od AI-a 
         self.send_text_area.insert("end", f"\n\nUpit: {tekstZaGpt}")
         self.send_text_area.see("end")  # scroll na dno kad se refresha
      else:
