@@ -3,14 +3,17 @@
 image cover = "images/cover.png"
 
 # Characters
+define S = Character( "Screenshot_37" )
 define b = Character( "Bugman" )
 define m = Character( "Moroa" )
 define p = Character( "Pablo" )
+image Screenshot_37 = "images/characters/Screenshot_37.png"
 image bugman = "images/characters/bugman.png"
 image moroa = "images/characters/moroa.png"
 image pablo = "images/characters/pablo.png"
 
 # NPCs
+image Screenshot_37 = "images/npcs/Screenshot_37.png"
 image _empty = "images/npcs/_empty.png"
 image _empty2 = "images/npcs/_empty2.png"
 image beba_morki_pas = "images/npcs/beba_morki_pas.png"
@@ -140,12 +143,16 @@ label next:
     if scn == "zemlja_rakova" and cscn != "zemlja_rakova":
         jump zemlja_rakova
 
+    if "Screenshot_37" in shw and "Screenshot_37" not in cshw:
+        jump Screenshot_37
     if "bugman" in shw and "bugman" not in cshw:
         jump bugman
     if "moroa" in shw and "moroa" not in cshw:
         jump moroa
     if "pablo" in shw and "pablo" not in cshw:
         jump pablo
+    if "Screenshot_37" in shw and "Screenshot_37" not in cshw:
+        jump Screenshot_37
     if "_empty" in shw and "_empty" not in cshw:
         jump _empty
     if "_empty2" in shw and "_empty2" not in cshw:
@@ -352,6 +359,18 @@ label zemlja_rakova:
 
 # CHARACTER AND NPC LABELS
 
+label Screenshot_37:
+    $ cshw[ pos ] = "Screenshot_37"
+    if pos == 0:
+        show Screenshot_37 with dissolve 
+    elif pos == 2:
+        show Screenshot_37 at left with moveinleft
+    elif pos == 1:
+        show Screenshot_37 at right with moveinright
+    
+    $ pos += 1
+    jump next
+
 label bugman:
     $ cshw[ pos ] = "bugman"
     if pos == 0:
@@ -384,6 +403,18 @@ label pablo:
         show pablo at left with moveinleft
     elif pos == 1:
         show pablo at right with moveinright
+    
+    $ pos += 1
+    jump next
+
+label Screenshot_37:
+    $ cshw[ pos ] = "Screenshot_37"
+    if pos == 0:
+        show Screenshot_37 with dissolve 
+    elif pos == 2:
+        show Screenshot_37 at left with moveinleft
+    elif pos == 1:
+        show Screenshot_37 at right with moveinright
     
     $ pos += 1
     jump next
