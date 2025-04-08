@@ -79,6 +79,7 @@ class Application(tk.Tk):
             self.add_item_to_section(section_name, file_path)
 
     def add_item_to_section(self, section_name, file_path):
+        print(section_name)
         # Dohvati path
         name = os.path.splitext(os.path.basename(file_path))[0]
 
@@ -92,6 +93,8 @@ class Application(tk.Tk):
             "Characters": os.path.join("game", "images", "characters"),
             "NPCs": os.path.join("game", "images", "npcs"),
             "Backgrounds": os.path.join("game", "images", "locations"),
+            "Sound effects": os.path.join("game", "audio", "soundeffects"),
+            "Background music": os.path.join("game", "audio", "bcgsound")
         }
 
         # Provjera postoji li odgovarajuci put
@@ -120,7 +123,7 @@ class Application(tk.Tk):
         self.create_option_frame("Backgrounds", self.selected_scene, self.config_data['Backgrounds'])
         self.create_check_frame("Characters", self.selected_show, self.config_data['Characters'])
         self.create_check_frame("NPCs", self.selected_show, self.config_data['NPCs'])
-        self.create_sound_effects_frame("Sound Effects", self.config_data['Sound effects'])
+        self.create_sound_effects_frame("Sound effects", self.config_data['Sound effects'])
         self.create_option_frame("Background music", self.selected_bgm, self.config_data['Background music'])
 
         # Bottom frame
