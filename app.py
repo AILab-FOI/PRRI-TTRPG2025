@@ -9,6 +9,9 @@ import subprocess
 import create_config
 import generate
 
+import sys
+from tkinter import messagebox, filedialog
+
 # Initialize the pygame mixer
 pygame.mixer.init()
 
@@ -129,8 +132,15 @@ class Application(tk.Tk):
         #self.quit()
 
     def on_run(self):
-        # OVDJE STAVITE PUTANJU DO RENPYA
-        subprocess.Popen( [ "/home/yogurt/Downloads/renpy-8.3.7-sdk/renpy.sh", os.getcwd() ] )
+        
+        renpy_path = create_config.get_or_select_renpy_path()
+        current_dir = os.getcwd()
+
+        if renpy_path:
+            print(f"Pokretanje Ren'Pya s: {renpy_path}")
+            subprocess.Popen([renpy_path, current_dir])
+        else:
+            messagebox.showerror("Greška", "Ren'Py nije odabran. Igra se neće pokrenuti.")
     
     def on_send(self):
 

@@ -1,9 +1,7 @@
 {
-    "scene": "vijecnica",
+    "scene": "nastamba_maga",
     "show": [
-        "cuvar_bruno",
-        "kuhar_branko_skockani",
-        "marina_mala"
+        "profesor_sipa_tintic"
     ],
     "sound": "",
     "bgm": "_silence"

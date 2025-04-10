@@ -1,5 +1,32 @@
 import os
 import sys
+from tkinter import filedialog, messagebox
+import json
+
+def get_or_select_renpy_path():
+
+    config_file = "renpy_path.json"
+
+    if os.path.exists(config_file):
+        with open(config_file, "r") as f:
+            saved_path = json.load(f).get("renpy_path", "")
+            if os.path.exists(saved_path):
+                return saved_path
+
+    filetypes = [("Ren'Py Launcher", "*.exe" if sys.platform.startswith("win") else "*.sh")]
+    selected = filedialog.askopenfilename(
+        title="Odaberi Ren'Py pokretač",
+        filetypes=filetypes
+    )
+
+    if selected:
+        with open(config_file, "w") as f:
+            json.dump({"renpy_path": selected}, f, indent=4)
+        return selected
+    else:
+        messagebox.showwarning("Nema odabira", "Ren'Py putanja nije odabrana.")
+        return None
+
 
 def get_filenames_from_directory(directory_path):
     """
