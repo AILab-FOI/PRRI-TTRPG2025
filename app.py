@@ -217,7 +217,7 @@ class Application(tk.Tk):
             from PIL import Image, ImageTk
 
            #učitavanje slike (bilo bi dobro da ostane di je)
-            bg_image = Image.open("resursi/OkvirOdgovor.webp")
+            bg_image = Image.open("resursi_UI/OkvirOdgovor.webp")
             try:
              resample_filter = Image.Resampling.LANCZOS
             except AttributeError:
