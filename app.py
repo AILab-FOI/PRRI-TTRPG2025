@@ -211,26 +211,39 @@ class Application(tk.Tk):
             # Otvori novi prozor
             self.send_window = tk.Toplevel(self)
             self.send_window.title("Odgovor AI-a")
-            self.send_window.geometry("500x400")
+            self.send_window.geometry("800x600")
+            self.send_window.resizable(False, False)  # ← OVO sprječava resize
 
-            frame = ttk.Frame(self.send_window)
-            frame.pack(fill="both", expand=True, padx=10, pady=10)
+            from PIL import Image, ImageTk
 
-            scrollbar = ttk.Scrollbar(frame) #malo promjenjeni scroll ali radi
+           #učitavanje slike (bilo bi dobro da ostane di je)
+            bg_image = Image.open("resursi/OkvirOdgovor.webp")
+            try:
+             resample_filter = Image.Resampling.LANCZOS
+            except AttributeError:
+              resample_filter = Image.ANTIALIAS  #ako slučajno nema dobru vezciju iz PIL
+            bg_image = bg_image.resize((800, 600), resample_filter)
+            bg_photo = ImageTk.PhotoImage(bg_image)
+
+          # Canvas i slika
+            canvas = tk.Canvas(self.send_window, width=800, height=600, highlightthickness=0)
+            canvas.pack(fill="both", expand=True)
+            canvas.create_image(0, 0, image=bg_photo, anchor="nw")
+            self.send_window.bg_photo = bg_photo
+
+         # Frame unutar canvasa za sadržaj, centriran
+            frame = ttk.Frame(canvas)
+            canvas.create_window(400, 300, window=frame, anchor="center", width=535, height=410)  
+
+         # Scrollbar i text area
+            scrollbar = ttk.Scrollbar(frame)
             scrollbar.pack(side="right", fill="y")
 
             self.send_text_area = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
             self.send_text_area.pack(side="left", fill="both", expand=True)
             scrollbar.config(command=self.send_text_area.yview)
-            text_area = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
-            text_area.pack(side="left", fill="both", expand=True)
 
-            scrollbar.config(command=text_area.yview)
-
-            self.send_text_area.insert("1.0", f"Upit: {tekstZaGpt}\n")
-            tekstZaGpt = self.text_input.get("1.0", "end").strip()
-            self.send_text_area.insert("end", f"{odgovorOdGpt}")
-
+            self.send_text_area.insert("1.0", f"Upit: {tekstZaGpt}\n{odgovorOdGpt}")
 # Run the application
 if __name__ == "__main__":
     create_config.main( overwrite=True )
