@@ -207,12 +207,14 @@ class Application(tk.Tk):
             self.send_text_area.insert("end", f"\n\nUpit: {tekstZaGpt}")
             self.send_text_area.insert("end", f"\n{odgovorOdGpt}")
             self.send_text_area.see("end")  # scroll na dno kad se refresha
+            self.text_input.delete("1.0", "end") #briše upit u text boxu
         else:
             # Otvori novi prozor
             self.send_window = tk.Toplevel(self)
             self.send_window.title("Odgovor AI-a")
             self.send_window.geometry("800x600")
-            self.send_window.resizable(False, False)  # ← OVO sprječava resize
+            self.text_input.delete("1.0", "end")
+            self.send_window.resizable(False, False)  #sprječava resize
 
             from PIL import Image, ImageTk
 
@@ -243,7 +245,14 @@ class Application(tk.Tk):
             self.send_text_area.pack(side="left", fill="both", expand=True)
             scrollbar.config(command=self.send_text_area.yview)
 
-            self.send_text_area.insert("1.0", f"Upit: {tekstZaGpt}\n{odgovorOdGpt}")
+            #tag za boldani tekst
+            self.send_text_area.tag_configure("bold", font=("TkDefaultFont", 10, "bold"))
+
+           #tekst s tagovima
+            self.send_text_area.insert("1.0", "Upit: ", "bold")
+            self.send_text_area.insert("end", tekstZaGpt + "\n", "bold")
+            self.send_text_area.insert("end", odgovorOdGpt)
+
 # Run the application
 if __name__ == "__main__":
     create_config.main( overwrite=True )
