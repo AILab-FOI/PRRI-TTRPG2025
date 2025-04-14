@@ -139,6 +139,12 @@ class Application(tk.Tk):
         self.text_input = tk.Text(bottom_frame, height=3, wrap="word")
         self.text_input.pack(side="left", expand=True, fill="both", padx=(0, 10))
 
+        scrollbar = ttk.Scrollbar(bottom_frame, orient="vertical", command=self.text_input.yview)
+        scrollbar.pack(side="right", fill="y")
+
+        self.text_input.configure(yscrollcommand=scrollbar.set)
+
+
         send_button = ttk.Button(bottom_frame, text="Send", command=self.on_send)
         send_button.pack(side="right")
 
@@ -153,9 +159,10 @@ class Application(tk.Tk):
         for i, option in enumerate(options):
             ttk.Checkbutton(frame, text=option, variable=variable_dict[option]).grid(row=i // 4, column=i % 4, sticky='w')
 
-        # Umetni gumb
+        # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
+        num_columns = 6  
         insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
-        insert_button.grid(row=(len(options) // 4) + 1, column=0, sticky='w', pady=5)
+        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=5)
 
     def create_option_frame(self, title, variable, options):
         frame = ttk.LabelFrame(self, text=title)
@@ -163,9 +170,10 @@ class Application(tk.Tk):
         for i, option in enumerate(options):
             ttk.Radiobutton(frame, text=option, variable=variable, value=option).grid(row=i // 4, column=i % 4, sticky='w')
 
-        # Umetni gumb
+        # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
+        num_columns = 6  
         insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
-        insert_button.grid(row=(len(options) // 4) + 1, column=0, sticky='w', pady=5)
+        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=5)
 
     def create_sound_effects_frame(self, title, options):
         frame = ttk.LabelFrame(self, text=title)
@@ -174,9 +182,10 @@ class Application(tk.Tk):
             button = ttk.Button(frame, text=option, command=lambda opt=option: self.on_sound_button_click(opt))
             button.grid(row=i // 4, column=i % 4, sticky='w')
         
-        # Umetni gumb
+       # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
+        num_columns = 6  
         insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
-        insert_button.grid(row=(len(options) // 4) + 1, column=0, sticky='w', pady=5)
+        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=5)
 
     def on_sound_button_click(self, sound_name):
         self.selected_sound = sound_name  # Update the selected_sound with the clicked sound's name
