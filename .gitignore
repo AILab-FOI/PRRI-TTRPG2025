@@ -355,3 +355,6 @@ text/texwrap.pyi
 uguu/gl.pyi
 uguu/uguu.pyi
 OpenAI/config.json
+
+renpy_path.json
+next.json
