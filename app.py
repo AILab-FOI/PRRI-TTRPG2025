@@ -168,7 +168,12 @@ class Application(tk.Tk):
         frame = ttk.LabelFrame(self, text=title)
         frame.pack(fill='both', expand=True)
         for i, option in enumerate(options):
-            ttk.Radiobutton(frame, text=option, variable=variable, value=option).grid(row=i // 4, column=i % 4, sticky='w')
+            # Modifikacije za brisanje
+            row = i // 2
+            col = (i % 2) * 2
+            ttk.Radiobutton(frame, text=option, variable=variable, value=option).grid(row=row, column=col, sticky='w')
+            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt))
+            del_button.grid(row=row, column=col + 1, sticky='w', padx=5)
 
         # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
         num_columns = 6  
@@ -261,6 +266,35 @@ class Application(tk.Tk):
             self.send_text_area.insert("1.0", "Upit: ", "bold")
             self.send_text_area.insert("end", tekstZaGpt + "\n", "bold")
             self.send_text_area.insert("end", odgovorOdGpt)
+
+    # Brisanje fajlova
+    def remove_item_from_section(self, section_name, item_name):
+        if item_name in self.config_data[section_name]:
+            self.config_data[section_name].remove(item_name)
+
+            # Mape za fajlove
+            section_paths = {
+                "Characters": os.path.join("game", "images", "characters"),
+                "NPCs": os.path.join("game", "images", "npcs"),
+                "Backgrounds": os.path.join("game", "images", "locations"),
+                "Sound effects": os.path.join("game", "audio", "soundeffects"),
+                "Background music": os.path.join("game", "audio", "bcgsound")
+            }
+
+            if section_name in section_paths:
+                directory = section_paths[section_name]
+                extensions = [".png", ".jpg", ".jpeg", ".webp", ".bmp", ".mp3", ".wav"]
+                for ext in extensions:
+                    file_path = os.path.join(directory, item_name + ext)
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+                        break
+
+            if section_name in ["Characters", "NPCs"]:
+                if item_name in self.selected_show:
+                    del self.selected_show[item_name]
+
+            self.refresh_ui()
 
 # Run the application
 if __name__ == "__main__":
