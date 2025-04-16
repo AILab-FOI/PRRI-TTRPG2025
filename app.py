@@ -167,7 +167,7 @@ class Application(tk.Tk):
         # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
         num_columns = 13  
         insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
-        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=5)
+        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=(40, 5))
 
     def create_option_frame(self, title, variable, options):
         frame = ttk.LabelFrame(self, text=title)
@@ -183,19 +183,25 @@ class Application(tk.Tk):
         # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
         num_columns = 13  
         insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
-        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=5)
+        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=(40, 5))
 
     def create_sound_effects_frame(self, title, options):
         frame = ttk.LabelFrame(self, text=title)
         frame.pack(fill='both', expand=True)
         for i, option in enumerate(options):
-            button = ttk.Button(frame, text=option, command=lambda opt=option: self.on_sound_button_click(opt))
-            button.grid(row=i // 4, column=i % 4, sticky='w')
+            # Modificirano za brisanje
+            row = i // 6
+            col = (i % 6) * 2
+            play_button = ttk.Button(frame, text=option, command=lambda opt=option: self.on_sound_button_click(opt))
+            play_button.grid(row=row, column=col, sticky='w')
+            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt))
+            del_button.grid(row=row, column=col + 1, sticky='w', padx=5)
+
         
        # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
         num_columns = 13  
         insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
-        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=5)
+        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=(40, 5))
 
     def on_sound_button_click(self, sound_name):
         self.selected_sound = sound_name  # Update the selected_sound with the clicked sound's name
