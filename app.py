@@ -139,6 +139,12 @@ class Application(tk.Tk):
         self.text_input = tk.Text(bottom_frame, height=3, wrap="word")
         self.text_input.pack(side="left", expand=True, fill="both", padx=(0, 10))
 
+        scrollbar = ttk.Scrollbar(bottom_frame, orient="vertical", command=self.text_input.yview)
+        scrollbar.pack(side="right", fill="y")
+
+        self.text_input.configure(yscrollcommand=scrollbar.set)
+
+
         send_button = ttk.Button(bottom_frame, text="Send", command=self.on_send)
         send_button.pack(side="right")
 
@@ -151,32 +157,51 @@ class Application(tk.Tk):
         frame.pack(fill='both', expand=True, pady=10)
 
         for i, option in enumerate(options):
-            ttk.Checkbutton(frame, text=option, variable=variable_dict[option]).grid(row=i // 4, column=i % 4, sticky='w')
+            # Modifikacije za brisanje uz svaku opciju
+            row = i // 6
+            col = (i % 6) * 2
+            ttk.Checkbutton(frame, text=option, variable=variable_dict[option]).grid(row=row, column=col, sticky='w')
+            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt))
+            del_button.grid(row=row, column=col + 1, sticky='w', padx=5)
 
-        # Umetni gumb
+        # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
+        num_columns = 13  
         insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
-        insert_button.grid(row=(len(options) // 4) + 1, column=0, sticky='w', pady=5)
+        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=(40, 5))
 
     def create_option_frame(self, title, variable, options):
         frame = ttk.LabelFrame(self, text=title)
         frame.pack(fill='both', expand=True)
         for i, option in enumerate(options):
-            ttk.Radiobutton(frame, text=option, variable=variable, value=option).grid(row=i // 4, column=i % 4, sticky='w')
+            # Modifikacije za brisanje uz svaku opciju
+            row = i // 6
+            col = (i % 6) * 2
+            ttk.Radiobutton(frame, text=option, variable=variable, value=option).grid(row=row, column=col, sticky='w')
+            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt))
+            del_button.grid(row=row, column=col + 1, sticky='w', padx=5)
 
-        # Umetni gumb
+        # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
+        num_columns = 13  
         insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
-        insert_button.grid(row=(len(options) // 4) + 1, column=0, sticky='w', pady=5)
+        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=(40, 5))
 
     def create_sound_effects_frame(self, title, options):
         frame = ttk.LabelFrame(self, text=title)
         frame.pack(fill='both', expand=True)
         for i, option in enumerate(options):
-            button = ttk.Button(frame, text=option, command=lambda opt=option: self.on_sound_button_click(opt))
-            button.grid(row=i // 4, column=i % 4, sticky='w')
+            # Modificirano za brisanje
+            row = i // 6
+            col = (i % 6) * 2
+            play_button = ttk.Button(frame, text=option, command=lambda opt=option: self.on_sound_button_click(opt))
+            play_button.grid(row=row, column=col, sticky='w')
+            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt))
+            del_button.grid(row=row, column=col + 1, sticky='w', padx=5)
+
         
-        # Umetni gumb
+       # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
+        num_columns = 13  
         insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
-        insert_button.grid(row=(len(options) // 4) + 1, column=0, sticky='w', pady=5)
+        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=(40, 5))
 
     def on_sound_button_click(self, sound_name):
         self.selected_sound = sound_name  # Update the selected_sound with the clicked sound's name
@@ -207,29 +232,80 @@ class Application(tk.Tk):
             self.send_text_area.insert("end", f"\n\nUpit: {tekstZaGpt}")
             self.send_text_area.insert("end", f"\n{odgovorOdGpt}")
             self.send_text_area.see("end")  # scroll na dno kad se refresha
+            self.text_input.delete("1.0", "end") #briše upit u text boxu
         else:
             # Otvori novi prozor
             self.send_window = tk.Toplevel(self)
             self.send_window.title("Odgovor AI-a")
-            self.send_window.geometry("500x400")
+            self.send_window.geometry("800x600")
+            self.text_input.delete("1.0", "end")
+            self.send_window.resizable(False, False)  #sprječava resize
 
-            frame = ttk.Frame(self.send_window)
-            frame.pack(fill="both", expand=True, padx=10, pady=10)
+            from PIL import Image, ImageTk
 
-            scrollbar = ttk.Scrollbar(frame) #malo promjenjeni scroll ali radi
+           #učitavanje slike (bilo bi dobro da ostane di je)
+            bg_image = Image.open("resursi_UI/OkvirOdgovor.webp")
+            try:
+             resample_filter = Image.Resampling.LANCZOS
+            except AttributeError:
+              resample_filter = Image.ANTIALIAS  #ako slučajno nema dobru vezciju iz PIL
+            bg_image = bg_image.resize((800, 600), resample_filter)
+            bg_photo = ImageTk.PhotoImage(bg_image)
+
+          # Canvas i slika
+            canvas = tk.Canvas(self.send_window, width=800, height=600, highlightthickness=0)
+            canvas.pack(fill="both", expand=True)
+            canvas.create_image(0, 0, image=bg_photo, anchor="nw")
+            self.send_window.bg_photo = bg_photo
+
+         # Frame unutar canvasa za sadržaj, centriran
+            frame = ttk.Frame(canvas)
+            canvas.create_window(400, 300, window=frame, anchor="center", width=535, height=410)  
+
+         # Scrollbar i text area
+            scrollbar = ttk.Scrollbar(frame)
             scrollbar.pack(side="right", fill="y")
 
             self.send_text_area = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
             self.send_text_area.pack(side="left", fill="both", expand=True)
             scrollbar.config(command=self.send_text_area.yview)
-            text_area = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
-            text_area.pack(side="left", fill="both", expand=True)
 
-            scrollbar.config(command=text_area.yview)
+            #tag za boldani tekst
+            self.send_text_area.tag_configure("bold", font=("TkDefaultFont", 10, "bold"))
 
-            self.send_text_area.insert("1.0", f"Upit: {tekstZaGpt}\n")
-            tekstZaGpt = self.text_input.get("1.0", "end").strip()
-            self.send_text_area.insert("end", f"{odgovorOdGpt}")
+           #tekst s tagovima
+            self.send_text_area.insert("1.0", "Upit: ", "bold")
+            self.send_text_area.insert("end", tekstZaGpt + "\n", "bold")
+            self.send_text_area.insert("end", odgovorOdGpt)
+
+    # Brisanje fajlova
+    def remove_item_from_section(self, section_name, item_name):
+        if item_name in self.config_data[section_name]:
+            self.config_data[section_name].remove(item_name)
+
+            # Mape za fajlove
+            section_paths = {
+                "Characters": os.path.join("game", "images", "characters"),
+                "NPCs": os.path.join("game", "images", "npcs"),
+                "Backgrounds": os.path.join("game", "images", "locations"),
+                "Sound effects": os.path.join("game", "audio", "soundeffects"),
+                "Background music": os.path.join("game", "audio", "bcgsound")
+            }
+
+            if section_name in section_paths:
+                directory = section_paths[section_name]
+                extensions = [".png", ".jpg", ".jpeg", ".webp", ".bmp", ".mp3", ".wav"]
+                for ext in extensions:
+                    file_path = os.path.join(directory, item_name + ext)
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+                        break
+
+            if section_name in ["Characters", "NPCs"]:
+                if item_name in self.selected_show:
+                    del self.selected_show[item_name]
+
+            self.refresh_ui()
 
 # Run the application
 if __name__ == "__main__":
