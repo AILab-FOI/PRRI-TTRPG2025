@@ -157,10 +157,15 @@ class Application(tk.Tk):
         frame.pack(fill='both', expand=True, pady=10)
 
         for i, option in enumerate(options):
-            ttk.Checkbutton(frame, text=option, variable=variable_dict[option]).grid(row=i // 4, column=i % 4, sticky='w')
+            # Modifikacije za brisanje uz svaku opciju
+            row = i // 6
+            col = (i % 6) * 2
+            ttk.Checkbutton(frame, text=option, variable=variable_dict[option]).grid(row=row, column=col, sticky='w')
+            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt))
+            del_button.grid(row=row, column=col + 1, sticky='w', padx=5)
 
         # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
-        num_columns = 6  
+        num_columns = 13  
         insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
         insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=5)
 
@@ -168,15 +173,15 @@ class Application(tk.Tk):
         frame = ttk.LabelFrame(self, text=title)
         frame.pack(fill='both', expand=True)
         for i, option in enumerate(options):
-            # Modifikacije za brisanje
-            row = i // 2
-            col = (i % 2) * 2
+            # Modifikacije za brisanje uz svaku opciju
+            row = i // 6
+            col = (i % 6) * 2
             ttk.Radiobutton(frame, text=option, variable=variable, value=option).grid(row=row, column=col, sticky='w')
             del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt))
             del_button.grid(row=row, column=col + 1, sticky='w', padx=5)
 
         # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
-        num_columns = 6  
+        num_columns = 13  
         insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
         insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=5)
 
@@ -188,7 +193,7 @@ class Application(tk.Tk):
             button.grid(row=i // 4, column=i % 4, sticky='w')
         
        # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
-        num_columns = 6  
+        num_columns = 13  
         insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
         insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=5)
 
