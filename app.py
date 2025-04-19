@@ -6,7 +6,9 @@ import shutil
 import pygame
 import os
 import subprocess
+from OpenAI.OpenAI import OpenAIChat
 
+from PIL import Image, ImageTk
 import create_config
 import generate
 
@@ -19,6 +21,7 @@ pygame.mixer.init()
 # Default
 DEFAULT_LOCATION = ''
 DEFAULT_BGM = ''
+api_key = ''
 
 # Parse the configuration file
 def parse_config(filename):
@@ -222,15 +225,23 @@ class Application(tk.Tk):
             messagebox.showerror("Greška", "Ren'Py nije odabran. Igra se neće pokrenuti.")
     
     def on_send(self):
-        odgovorOdGpt = 'placeholder_odgovor'
+        global api_key
+
+        if not api_key:
+            api_key = OpenAIChat.ask_for_api_key(self)
+
+        chat = OpenAIChat(api_key)
+
         tekstZaGpt = self.text_input.get("1.0", "end").strip()
+        reply = chat.send_message(tekstZaGpt)
+        
         if not tekstZaGpt:
             return  # ne radi ništa ako je polje prazno (mora bit tu inače ne radi?!) 
         
         if self.send_window and self.send_window.winfo_exists():
             # Ako prozor već postoji, dodaj novi tekst i zadrži stari
             self.send_text_area.insert("end", f"\n\nUpit: {tekstZaGpt}")
-            self.send_text_area.insert("end", f"\n{odgovorOdGpt}")
+            self.send_text_area.insert("end", f"\n{reply}")
             self.send_text_area.see("end")  # scroll na dno kad se refresha
             self.text_input.delete("1.0", "end") #briše upit u text boxu
         else:
@@ -240,8 +251,6 @@ class Application(tk.Tk):
             self.send_window.geometry("800x600")
             self.text_input.delete("1.0", "end")
             self.send_window.resizable(False, False)  #sprječava resize
-
-            from PIL import Image, ImageTk
 
            #učitavanje slike (bilo bi dobro da ostane di je)
             bg_image = Image.open("resursi_UI/OkvirOdgovor.webp")
@@ -276,7 +285,7 @@ class Application(tk.Tk):
            #tekst s tagovima
             self.send_text_area.insert("1.0", "Upit: ", "bold")
             self.send_text_area.insert("end", tekstZaGpt + "\n", "bold")
-            self.send_text_area.insert("end", odgovorOdGpt)
+            self.send_text_area.insert("end", reply)
 
     # Brisanje fajlova
     def remove_item_from_section(self, section_name, item_name):
@@ -304,8 +313,6 @@ class Application(tk.Tk):
             if section_name in ["Characters", "NPCs"]:
                 if item_name in self.selected_show:
                     del self.selected_show[item_name]
-
-            self.refresh_ui()
 
 # Run the application
 if __name__ == "__main__":
