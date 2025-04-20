@@ -53,6 +53,25 @@ def play_sound(sound_name):
     pygame.mixer.music.load(sound_path)
     pygame.mixer.music.play()
 
+def save_api_key(api_key, filename='config.json'):
+    data = {'api_key': api_key}
+
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=4)
+
+def read_api_key(filename='config.json'):
+    if not os.path.exists(filename):
+        with open(filename, 'w') as f:
+            json.dump({'api_key' : ''}, f, indent=4)
+        return ''
+
+    with open(filename, 'r')as f:
+        data = json.load(f)
+
+    api_key = data.get('api_key')
+    return api_key
+
+
 # Main GUI Application
 class Application(tk.Tk):
     def __init__(self, config_data):
@@ -229,6 +248,7 @@ class Application(tk.Tk):
 
         if not api_key:
             api_key = OpenAIChat.ask_for_api_key(self)
+            save_api_key(api_key)
 
         chat = OpenAIChat(api_key)
 
@@ -328,4 +348,7 @@ if __name__ == "__main__":
     generate.generate_script(characters, npcs, backgrounds, current_dir, True)
     config = parse_config('interface.conf')
     app = Application(config)
+
+    api_key = read_api_key()
+
     app.mainloop()
