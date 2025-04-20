@@ -125,6 +125,37 @@ class Application(tk.Tk):
         self.refresh_ui()
 
     def create_frames(self):
+        
+        style = ttk.Style()
+        style.theme_use('default')  # Use 'default' to allow custom colors (important!)
+
+        # Style for a regular Frame
+        style.configure("Custom.TFrame", background="lightgreen")
+
+        # Style for a LabelFrame (frame with a title)
+        style.configure("Custom.TLabel", 
+            background="lightgreen", 
+            foreground="darkblue", 
+            font=("Arial", 14, "bold"))
+        
+        # Style for Button
+        style.configure("Custom.TButton",
+            background="darkblue",
+            foreground="lightgreen",
+            font=("Arial", 10, 'bold'))
+
+        # Style for Checkbutton
+        style.configure("Custom.TCheckbutton",
+            background="lightgreen",
+            foreground="darkblue",
+            font=("Arial", 10, 'bold'))
+
+        # Style for Radiobutton
+        style.configure("Custom.TRadiobutton",
+            background="lightgreen",
+            foreground="darkblue",
+            font=("Arial", 10, 'bold'))
+        
         # Top frames
         self.create_option_frame("Backgrounds", self.selected_scene, self.config_data['Backgrounds'])
         self.create_check_frame("Characters", self.selected_show, self.config_data['Characters'])
@@ -133,10 +164,10 @@ class Application(tk.Tk):
         self.create_option_frame("Background music", self.selected_bgm, self.config_data['Background music'])
 
         # Bottom frame
-        bottom_frame = ttk.Frame(self)
-        bottom_frame.pack(side="bottom", fill="x", padx=10, pady=10)
+        bottom_frame = ttk.Frame(self, style="Custom.TFrame")
+        bottom_frame.pack(side="bottom", fill="x", padx=5, pady=10)
 
-        label = ttk.Label(bottom_frame, text="Pitanje za AI:")
+        label = ttk.Label(bottom_frame, text="Pitanje za AI:", style="Custom.TLabel")
         label.pack(anchor="w", pady=(0, 5))
 
         self.text_input = tk.Text(bottom_frame, height=3, wrap="word")
@@ -148,63 +179,86 @@ class Application(tk.Tk):
         self.text_input.configure(yscrollcommand=scrollbar.set)
 
 
-        send_button = ttk.Button(bottom_frame, text="Send", command=self.on_send)
+        send_button = ttk.Button(bottom_frame, text="Send", command=self.on_send,  style="Custom.TButton")
         send_button.pack(side="right")
 
         # OK Button
-        ttk.Button(self, text="OK", command=self.on_ok).pack(side="right")
-        ttk.Button(self, text="Run game", command=self.on_run).pack(side="left")
+        ttk.Button(self, text="OK", command=self.on_ok, style="Custom.TButton").pack(side="left", padx=5)
+        ttk.Button(self, text="Run game", command=self.on_run, style="Custom.TButton").pack(side="left", padx=5)
 
     def create_check_frame(self, title, variable_dict, options):
-        frame = ttk.LabelFrame(self, text=title)
-        frame.pack(fill='both', expand=True, pady=10)
+        
+        title_label = ttk.Label(self, text=title, style="Custom.TLabel", anchor="w")
+        title_label.pack(fill="x", padx=5, pady=(5, 0))  # Only top padding
+        
+        separator = ttk.Separator(self, orient="horizontal")
+        separator.pack(fill="x", padx=5)  # Padding bottom only
+        
+        frame = ttk.Frame(self, style="Custom.TFrame")
+        frame.pack(fill='both', expand=True, padx=5, pady=(0, 5))
 
         for i, option in enumerate(options):
             # Modifikacije za brisanje uz svaku opciju
             row = i // 6
             col = (i % 6) * 2
-            ttk.Checkbutton(frame, text=option, variable=variable_dict[option]).grid(row=row, column=col, sticky='w')
-            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt))
+            ttk.Checkbutton(frame, text=option, variable=variable_dict[option], style="Custom.TCheckbutton").grid(row=row, column=col, sticky='w')
+            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt), style='Custom.TButton')
             del_button.grid(row=row, column=col + 1, sticky='w', padx=5)
 
         # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
         num_columns = 13  
-        insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
-        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=(40, 5))
+        insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title), style='Custom.TButton')
+        insert_button.grid(row=0, column=num_columns - 1, sticky='e', padx=(40, 5))
 
     def create_option_frame(self, title, variable, options):
-        frame = ttk.LabelFrame(self, text=title)
-        frame.pack(fill='both', expand=True)
+        
+        title_label = ttk.Label(self, text=title, style="Custom.TLabel", anchor="w")
+        title_label.pack(fill="x", padx=5, pady=(10, 0))  # Only top padding
+        
+        separator = ttk.Separator(self, orient="horizontal")
+        separator.pack(fill="x", padx=5)  # Padding bottom only
+        
+        frame = ttk.Frame(self, style="Custom.TFrame")
+        frame.pack(fill='both', expand=True, padx=5, pady=(0, 10))
+        
         for i, option in enumerate(options):
             # Modifikacije za brisanje uz svaku opciju
             row = i // 6
             col = (i % 6) * 2
-            ttk.Radiobutton(frame, text=option, variable=variable, value=option).grid(row=row, column=col, sticky='w')
-            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt))
+            ttk.Radiobutton(frame, text=option, variable=variable, value=option, style='Custom.TRadiobutton').grid(row=row, column=col, sticky='w')
+            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt), style='Custom.TButton')
             del_button.grid(row=row, column=col + 1, sticky='w', padx=5)
 
         # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
         num_columns = 13  
-        insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
-        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=(40, 5))
+        insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title), style='Custom.TButton')
+        insert_button.grid(row=0, column=num_columns - 1, sticky='e', padx=(40, 5))
 
     def create_sound_effects_frame(self, title, options):
-        frame = ttk.LabelFrame(self, text=title)
-        frame.pack(fill='both', expand=True)
+        
+        title_label = ttk.Label(self, text=title, style="Custom.TLabel", anchor="w")
+        title_label.pack(fill="x", padx=5, pady=(10, 0))  # Only top padding
+        
+        separator = ttk.Separator(self, orient="horizontal")
+        separator.pack(fill="x", padx=5)  # Padding bottom only
+        
+        frame = ttk.Frame(self, style="Custom.TFrame")
+        frame.pack(fill='both', expand=True, padx=5, pady=(0, 10))
+        
         for i, option in enumerate(options):
             # Modificirano za brisanje
             row = i // 6
             col = (i % 6) * 2
-            play_button = ttk.Button(frame, text=option, command=lambda opt=option: self.on_sound_button_click(opt))
+            play_button = ttk.Button(frame, text=option, command=lambda opt=option: self.on_sound_button_click(opt), style="Custom.TButton")
             play_button.grid(row=row, column=col, sticky='w')
-            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt))
+            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt), style="Custom.TButton")
             del_button.grid(row=row, column=col + 1, sticky='w', padx=5)
 
         
        # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
         num_columns = 13  
-        insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title))
-        insert_button.grid(row=0, column=num_columns - 1, sticky='e', pady=5, padx=(40, 5))
+        insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title), style="Custom.TButton")
+        insert_button.grid(row=0, column=num_columns - 1, sticky='e', padx=(40, 5))
 
     def on_sound_button_click(self, sound_name):
         self.selected_sound = sound_name  # Update the selected_sound with the clicked sound's name
@@ -222,7 +276,7 @@ class Application(tk.Tk):
             print(f"Pokretanje Ren'Pya s: {renpy_path}")
             subprocess.Popen([renpy_path, current_dir])
         else:
-            messagebox.showerror("Greška", "Ren'Py nije odabran. Igra se neće pokrenuti.")
+            messagebox.showerror("Greška", "RenPy nije odabran. Igra se neće pokrenuti.")
     
     def on_send(self):
         global api_key
