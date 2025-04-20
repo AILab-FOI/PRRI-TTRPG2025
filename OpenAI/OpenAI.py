@@ -4,7 +4,9 @@ import tkinter as tk
 from tkinter import simpledialog, messagebox
 
 class OpenAIChat:
+    messages = []
     def __init__(self, api_key=None):
+
 
         if not api_key:
             api_key = self.ask_for_api_key()
@@ -16,6 +18,7 @@ class OpenAIChat:
             "Based on the description that the Dungeon Master gives you, it is up to you to give them a backstory "
             "and necessary details such as what the character is like, their attributes, flaws, what they like and don't like, and so on."
         )
+        self.messages.append({"role": "system", "content": self.system_prompt})
 
     def ask_for_api_key(self):
         root = tk.Tk()
@@ -35,15 +38,19 @@ class OpenAIChat:
         if not user_prompt:
             return "No prompt provided!"
 
+        self.messages.append({"role": "user", "content": user_prompt})
+
         try:
             response = openai.chat.completions.create(
                 model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": self.system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
+                messages=self.messages,
                 temperature=0.5
             )
-            return response.choices[0].message.content
+
+            response = response.choices[0].message.content
+
+            self.messages.append({"role": "assistant", "content": response})
+
+            return response
         except Exception as e:
             return f"Error: {e}"
