@@ -336,6 +336,8 @@ class Application(tk.Tk):
 
         tekstZaGpt = self.text_input.get("1.0", "end").strip()
         reply = chat.send_message(tekstZaGpt)
+
+         self.save_to_history(tekstZaGpt, reply)
         
         if not tekstZaGpt:
             return  # ne radi ništa ako je polje prazno (mora bit tu inače ne radi?!) 
