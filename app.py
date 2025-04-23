@@ -376,7 +376,7 @@ class Application(tk.Tk):
 
            #tekst s tagovima
             self.send_text_area.insert("1.0", "Upit: ", "bold")
-            self.send_text_area.insert("end", tekstZaGpt + "\n", "bold")
+            self.send_text_area.insert("end", tekstZaGpt + "\n\n", "bold")
             self.send_text_area.insert("end", reply)
 
     # Brisanje fajlova
