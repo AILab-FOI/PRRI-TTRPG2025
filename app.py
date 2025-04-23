@@ -15,6 +15,9 @@ import generate
 import sys
 from tkinter import messagebox, filedialog
 
+import os
+from tkinter import messagebox
+
 # Initialize the pygame mixer
 pygame.mixer.init()
 
@@ -99,6 +102,10 @@ class Application(tk.Tk):
         self.selected_bgm = tk.StringVar()
 
         self.create_frames()
+
+    def save_to_history(self, question, answer):
+     with open("chat_povijest.txt", "a", encoding="utf-8") as f:
+        f.write(f"Upit: {question} \n{answer}\n\n{'-'*50}\n\n")
 
     def refresh_ui(self):
         for widget in self.winfo_children():
@@ -213,6 +220,9 @@ class Application(tk.Tk):
         # OK Button
         ttk.Button(self, text="OK", command=self.on_ok, style="Custom.TButton").pack(side="left", padx=5)
         ttk.Button(self, text="Run game", command=self.on_run, style="Custom.TButton").pack(side="left", padx=5)
+
+        ucitaj_button = ttk.Button(self, text="Učitaj prijašnji razgovor", command=self.load_previous_conversation, style="Custom.TButton")
+        ucitaj_button.pack(side="left", padx=5)
 
     def create_check_frame(self, title, variable_dict, options):
         
@@ -375,9 +385,54 @@ class Application(tk.Tk):
             self.send_text_area.tag_configure("bold", font=("TkDefaultFont", 10, "bold"))
 
            #tekst s tagovima
-            self.send_text_area.insert("1.0", "Upit: ", "bold")
-            self.send_text_area.insert("end", tekstZaGpt + "\n\n", "bold")
+            self.send_text_area.insert("1.0", "\n" + "Upit: ")
+            self.send_text_area.insert("end", tekstZaGpt + "\n")
             self.send_text_area.insert("end", reply)
+
+    def load_previous_conversation(self):
+     if not os.path.exists("chat_povijest.txt"):
+         messagebox.showinfo("Povijest razgovora", "Još nema spremljenih razgovora.")
+         return
+
+     with open("chat_povijest.txt", "r", encoding="utf-8") as f:
+        history = f.read()
+
+     if self.send_window and self.send_window.winfo_exists():
+        self.send_text_area.insert("1.0", history + "\n\n")
+        self.send_text_area.see("end")
+     else:
+         self.send_window = tk.Toplevel(self)
+         self.send_window.title("Odgovor AI-a")
+         self.send_window.geometry("800x600")
+         self.send_window.resizable(False, False)
+
+         bg_image = Image.open("resursi_UI/OkvirOdgovor.webp")
+         try:
+             resample_filter = Image.Resampling.LANCZOS
+         except AttributeError:
+             resample_filter = Image.ANTIALIAS
+         bg_image = bg_image.resize((800, 600), resample_filter)
+         bg_photo = ImageTk.PhotoImage(bg_image)
+ 
+         canvas = tk.Canvas(self.send_window, width=800, height=600, highlightthickness=0)
+         canvas.pack(fill="both", expand=True)
+         canvas.create_image(0, 0, image=bg_photo, anchor="nw")
+         self.send_window.bg_photo = bg_photo
+
+         frame = ttk.Frame(canvas)
+         canvas.create_window(400, 300, window=frame, anchor="center", width=535, height=410)
+
+         scrollbar = ttk.Scrollbar(frame)
+         scrollbar.pack(side="right", fill="y")
+
+         self.send_text_area = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
+         self.send_text_area.pack(side="left", fill="both", expand=True)
+         scrollbar.config(command=self.send_text_area.yview)
+
+         self.send_text_area.tag_configure("bold", font=("TkDefaultFont", 10, "bold"))
+
+         self.send_text_area.insert("1.0", history + "\n\n")
+
 
     # Brisanje fajlova
     def remove_item_from_section(self, section_name, item_name):
