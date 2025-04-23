@@ -71,6 +71,13 @@ def read_api_key(filename='config.json'):
     api_key = data.get('api_key')
     return api_key
 
+photo = {}
+
+def load_image():
+    img = Image.open("resursi_UI/trash.png")
+    resized_img = img.resize((20, 20))
+    photo["trash"] = ImageTk.PhotoImage(resized_img)
+
 
 # Main GUI Application
 class Application(tk.Tk):
@@ -98,8 +105,8 @@ class Application(tk.Tk):
             widget.destroy()
         self.create_frames()
 
-    def insert_file(self, section_name):
-        file_path = filedialog.askopenfilename(title="Odaberi datoteku")
+    def insert_file(self, section_name, type):
+        file_path = filedialog.askopenfilename(title="Odaberi datoteku", filetypes=[("Select file", type)])
         if file_path:
             self.add_item_to_section(section_name, file_path)
 
@@ -141,46 +148,48 @@ class Application(tk.Tk):
             self.selected_show[name] = tk.BooleanVar()
 
         # Refresh
+        regenerate_config(overwrite=True)
+        
         self.refresh_ui()
 
     def create_frames(self):
         
         style = ttk.Style()
-        style.theme_use('default')  # Use 'default' to allow custom colors (important!)
+        style.theme_use('default')
 
-        # Style for a regular Frame
-        style.configure("Custom.TFrame", background="lightgreen")
+        style.configure("Custom.TFrame", 
+            background="lightgreen")
 
-        # Style for a LabelFrame (frame with a title)
         style.configure("Custom.TLabel", 
             background="lightgreen", 
             foreground="darkblue", 
             font=("Arial", 14, "bold"))
         
-        # Style for Button
         style.configure("Custom.TButton",
             background="darkblue",
             foreground="lightgreen",
             font=("Arial", 10, 'bold'))
-
-        # Style for Checkbutton
+        
+        style.configure("Image.TButton",
+            background="red",
+            foreground="lightgreen",
+            font=("Arial", 10, 'bold'))
+        
         style.configure("Custom.TCheckbutton",
             background="lightgreen",
             foreground="darkblue",
             font=("Arial", 10, 'bold'))
-
-        # Style for Radiobutton
+        
         style.configure("Custom.TRadiobutton",
             background="lightgreen",
             foreground="darkblue",
             font=("Arial", 10, 'bold'))
         
-        # Top frames
-        self.create_option_frame("Backgrounds", self.selected_scene, self.config_data['Backgrounds'])
+        self.create_option_frame("Backgrounds", self.selected_scene, self.config_data['Backgrounds'], "*.png")
         self.create_check_frame("Characters", self.selected_show, self.config_data['Characters'])
         self.create_check_frame("NPCs", self.selected_show, self.config_data['NPCs'])
         self.create_sound_effects_frame("Sound effects", self.config_data['Sound effects'])
-        self.create_option_frame("Background music", self.selected_bgm, self.config_data['Background music'])
+        self.create_option_frame("Background music", self.selected_bgm, self.config_data['Background music'], "*.mp3")
 
         # Bottom frame
         bottom_frame = ttk.Frame(self, style="Custom.TFrame")
@@ -220,63 +229,72 @@ class Application(tk.Tk):
             # Modifikacije za brisanje uz svaku opciju
             row = i // 6
             col = (i % 6) * 2
+            load_image()
             ttk.Checkbutton(frame, text=option, variable=variable_dict[option], style="Custom.TCheckbutton").grid(row=row, column=col, sticky='w')
-            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt), style='Custom.TButton')
+            del_button = ttk.Button(frame, image=photo["trash"], command=lambda opt=option: self.remove_item_from_section(title, opt), style='Image.TButton')
+            del_button.image = photo["trash"]
             del_button.grid(row=row, column=col + 1, sticky='w', padx=5)
 
         # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
-        num_columns = 13  
-        insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title), style='Custom.TButton')
+        num_columns = 13
+        type = "*.png"
+        insert_button = ttk.Button(frame, text="Add", command=lambda: self.insert_file(title, type), style='Custom.TButton')
         insert_button.grid(row=0, column=num_columns - 1, sticky='e', padx=(40, 5))
 
-    def create_option_frame(self, title, variable, options):
+    def create_option_frame(self, title, variable, options, type):
         
         title_label = ttk.Label(self, text=title, style="Custom.TLabel", anchor="w")
-        title_label.pack(fill="x", padx=5, pady=(10, 0))  # Only top padding
+        title_label.pack(fill="x", padx=5, pady=(5, 0))  # Only top padding
         
         separator = ttk.Separator(self, orient="horizontal")
         separator.pack(fill="x", padx=5)  # Padding bottom only
         
         frame = ttk.Frame(self, style="Custom.TFrame")
-        frame.pack(fill='both', expand=True, padx=5, pady=(0, 10))
+        frame.pack(fill='both', expand=True, padx=5, pady=(0, 5))
         
         for i, option in enumerate(options):
             # Modifikacije za brisanje uz svaku opciju
             row = i // 6
             col = (i % 6) * 2
+            load_image()
             ttk.Radiobutton(frame, text=option, variable=variable, value=option, style='Custom.TRadiobutton').grid(row=row, column=col, sticky='w')
-            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt), style='Custom.TButton')
+            del_button = ttk.Button(frame, image=photo["trash"], command=lambda opt=option: self.remove_item_from_section(title, opt), style='Image.TButton')
+            del_button.image = photo["trash"]
             del_button.grid(row=row, column=col + 1, sticky='w', padx=5)
 
         # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
-        num_columns = 13  
-        insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title), style='Custom.TButton')
+        num_columns = 13
+        #type = "*.png"
+        insert_button = ttk.Button(frame, text="Add", command=lambda: self.insert_file(title, type), style='Custom.TButton')
         insert_button.grid(row=0, column=num_columns - 1, sticky='e', padx=(40, 5))
 
     def create_sound_effects_frame(self, title, options):
         
         title_label = ttk.Label(self, text=title, style="Custom.TLabel", anchor="w")
-        title_label.pack(fill="x", padx=5, pady=(10, 0))  # Only top padding
+        title_label.pack(fill="x", padx=5, pady=(5, 0))  # Only top padding
         
         separator = ttk.Separator(self, orient="horizontal")
         separator.pack(fill="x", padx=5)  # Padding bottom only
         
         frame = ttk.Frame(self, style="Custom.TFrame")
-        frame.pack(fill='both', expand=True, padx=5, pady=(0, 10))
+        frame.pack(fill='both', expand=True, padx=5, pady=(0, 5))
         
         for i, option in enumerate(options):
             # Modificirano za brisanje
             row = i // 6
             col = (i % 6) * 2
+            load_image()
             play_button = ttk.Button(frame, text=option, command=lambda opt=option: self.on_sound_button_click(opt), style="Custom.TButton")
             play_button.grid(row=row, column=col, sticky='w')
-            del_button = ttk.Button(frame, text="Obriši", width=6, command=lambda opt=option: self.remove_item_from_section(title, opt), style="Custom.TButton")
+            del_button = ttk.Button(frame, image=photo["trash"], command=lambda opt=option: self.remove_item_from_section(title, opt), style="Image.TButton")
+            del_button.image = photo["trash"]
             del_button.grid(row=row, column=col + 1, sticky='w', padx=5)
 
         
        # Umetni gumb (nemojte ovo mjenjati bez da proučite kako funkcionira!)
-        num_columns = 13  
-        insert_button = ttk.Button(frame, text="Umetni", command=lambda: self.insert_file(title), style="Custom.TButton")
+        num_columns = 13
+        type = "*.mp3"
+        insert_button = ttk.Button(frame, text="Add", command=lambda: self.insert_file(title, type), style="Custom.TButton")
         insert_button.grid(row=0, column=num_columns - 1, sticky='e', padx=(40, 5))
 
     def on_sound_button_click(self, sound_name):
@@ -387,22 +405,37 @@ class Application(tk.Tk):
             if section_name in ["Characters", "NPCs"]:
                 if item_name in self.selected_show:
                     del self.selected_show[item_name]
+                    
+        self.refresh_ui()
 
 # Run the application
-if __name__ == "__main__":
-    create_config.main( overwrite=True )
+
+def regenerate_config(overwrite=True):
+    # Step 1: Create (or overwrite) the config file
+    create_config.main(overwrite=overwrite)
+
+    # Step 2: Parse the new config
     current_dir = os.path.dirname(os.path.realpath(__file__))
     config_file_path = os.path.join(current_dir, 'interface.conf')
-    data = generate.parse_config( config_file_path )
-    characters, npcs, sound_effects, backgrounds, bgms = data[ "Characters" ], data[ "NPCs" ], data[ "Sound effects" ], data[ "Backgrounds" ], data[ "Background music" ]
+    data = generate.parse_config(config_file_path)
+
+    # Optional: Extract components (use them or return them)
+    characters = data["Characters"]
+    npcs = data["NPCs"]
+    sound_effects = data["Sound effects"]
+    backgrounds = data["Backgrounds"]
+    bgms = data["Background music"]
     DEFAULT_LOCATION = backgrounds[ 0 ]
     DEFAULT_BGM = bgms[ 0 ]
-
-    # Generate the complete script.rpy file
+    
+    characters, npcs, sound_effects, backgrounds, bgms = data[ "Characters" ], data[ "NPCs" ], data[ "Sound effects" ], data[ "Backgrounds" ], data[ "Background music" ]
+    
     generate.generate_script(characters, npcs, backgrounds, current_dir, True)
-    config = parse_config('interface.conf')
+
+    return data
+
+if __name__ == "__main__":
+    config = regenerate_config(overwrite=True)
     app = Application(config)
-
     api_key = read_api_key()
-
     app.mainloop()
