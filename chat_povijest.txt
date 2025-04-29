@@ -13,3 +13,18 @@ It seems like you might have entered an incomplete message. How can I help you w
 
 --------------------------------------------------
 
+Upit:  
+No prompt provided!
+
+--------------------------------------------------
+
+Upit: ghjkf 
+It seems like you've entered a random string of characters. If you have a specific character or NPC in mind that you'd like me to help you create a backstory for, please provide me with some details or a description to work with.
+
+--------------------------------------------------
+
+Upit: dsgsdf 
+It seems like there might have been a typo in your message. Could you please provide more information or clarify so I can assist you better?
+
+--------------------------------------------------
+

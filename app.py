@@ -182,35 +182,35 @@ class Application(tk.Tk):
         style.theme_use('default')
 
         style.configure("Custom.TFrame", 
-            background="lightgreen")
+            background="#282d39")
 
         style.configure("Custom.TLabel", 
-            background="lightgreen", 
-            foreground="darkblue", 
+            background="#282d39", 
+            foreground="#fbf9f5", 
             font=("Arial", 14, "bold"))
         
         style.configure("Custom.TButton",
-            background="darkblue",
-            foreground="lightgreen",
+            background="#91b8db",
+            foreground="#282d39",
             font=("Arial", 10, 'bold'))
         
         style.configure("Image.TButton",
-            background="red",
-            foreground="lightgreen",
+            background="#e15656",
+            foreground="#fbf9f5",
             font=("Arial", 10, 'bold'))
         
         style.configure("Custom.TCheckbutton",
-            background="lightgreen",
-            foreground="darkblue",
+            background="#282d39",
+            foreground="#fbf9f5",
             font=("Arial", 10, 'bold'))
         
         style.configure("Custom.TRadiobutton",
-            background="lightgreen",
-            foreground="darkblue",
+            background="#282d39",
+            foreground="#fbf9f5",
             font=("Arial", 10, 'bold'))
         
-        padding_frame = tk.Frame(self, height=10, bg=self["background"])
-        padding_frame.pack(side="top", fill="x", pady=30)
+        padding_frame = tk.Frame(self, height=10, width=1, bg=self["background"])
+        padding_frame.pack(side="top", pady=65)
         
         self.create_option_frame("Backgrounds", self.selected_scene, self.config_data['Backgrounds'], "*.png")
         self.create_check_frame("Characters", self.selected_show, self.config_data['Characters'])
@@ -220,7 +220,7 @@ class Application(tk.Tk):
 
         # Bottom frame
         bottom_frame = ttk.Frame(self, style="Custom.TFrame")
-        bottom_frame.pack(side="bottom", fill="x", padx=50, pady=(10, 75))
+        bottom_frame.pack(side="bottom", fill="x", padx=50, pady=(10, 110))
 
         label = ttk.Label(bottom_frame, text="Pitanje za AI:", style="Custom.TLabel")
         label.pack(anchor="w", pady=(0, 5))
