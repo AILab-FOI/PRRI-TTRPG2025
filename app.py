@@ -89,19 +89,36 @@ class Application(tk.Tk):
         self.title("Game Configuration")
         self.config_data = config_data
 
-       # refernece koje se koriste za refreshanje (nemoj micat nigdje/uključeno)
+        self.original_bg = Image.open("resursi_UI/pozadina.png")
+        self.bg_image = ImageTk.PhotoImage(self.original_bg)
+
+        self.bg_label = tk.Label(self)
+        self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+        self.bind("<Configure>", self._resize_background)
+
+        self.main_frame = tk.Frame(self, bg="white")
+        self.main_frame.pack(fill="both", expand=True)
+
+        self.selected_scene = tk.StringVar()
+        self.selected_show = {item: tk.BooleanVar() for item in config_data['NPCs'] + config_data['Characters']}
+        self.selected_sound = ""
+        self.selected_bgm = tk.StringVar()
+
         self.send_window = None
         self.send_text_area = None
 
         self.style = ttk.Style()
-        self.style.theme_use('clam')  # or try 'clam', 'alt', 'default', 'classic' etc.
-
-        self.selected_scene = tk.StringVar()
-        self.selected_show = {item: tk.BooleanVar() for item in config_data['NPCs'] + config_data['Characters']}
-        self.selected_sound = ""  # Updated to store the last clicked sound as a string
-        self.selected_bgm = tk.StringVar()
+        self.style.theme_use('clam')
 
         self.create_frames()
+
+    def _resize_background(self, event):
+        new_width = event.width
+        new_height = event.height
+        resized = self.original_bg.resize((new_width, new_height), Image.LANCZOS)
+        self.bg_image = ImageTk.PhotoImage(resized)
+        self.bg_label.config(image=self.bg_image)
 
     def save_to_history(self, question, answer):
      with open("chat_povijest.txt", "a", encoding="utf-8") as f:
@@ -192,6 +209,9 @@ class Application(tk.Tk):
             foreground="darkblue",
             font=("Arial", 10, 'bold'))
         
+        padding_frame = tk.Frame(self, height=10, bg=self["background"])
+        padding_frame.pack(side="top", fill="x", pady=30)
+        
         self.create_option_frame("Backgrounds", self.selected_scene, self.config_data['Backgrounds'], "*.png")
         self.create_check_frame("Characters", self.selected_show, self.config_data['Characters'])
         self.create_check_frame("NPCs", self.selected_show, self.config_data['NPCs'])
@@ -200,7 +220,7 @@ class Application(tk.Tk):
 
         # Bottom frame
         bottom_frame = ttk.Frame(self, style="Custom.TFrame")
-        bottom_frame.pack(side="bottom", fill="x", padx=5, pady=10)
+        bottom_frame.pack(side="bottom", fill="x", padx=50, pady=(10, 75))
 
         label = ttk.Label(bottom_frame, text="Pitanje za AI:", style="Custom.TLabel")
         label.pack(anchor="w", pady=(0, 5))
@@ -218,7 +238,7 @@ class Application(tk.Tk):
         send_button.pack(side="right")
 
         # OK Button
-        ttk.Button(self, text="OK", command=self.on_ok, style="Custom.TButton").pack(side="left", padx=5)
+        ttk.Button(self, text="OK", command=self.on_ok, style="Custom.TButton").pack(side="left", padx=(50, 5))
         ttk.Button(self, text="Run game", command=self.on_run, style="Custom.TButton").pack(side="left", padx=5)
 
         ucitaj_button = ttk.Button(self, text="Učitaj prijašnji razgovor", command=self.load_previous_conversation, style="Custom.TButton")
@@ -227,13 +247,13 @@ class Application(tk.Tk):
     def create_check_frame(self, title, variable_dict, options):
         
         title_label = ttk.Label(self, text=title, style="Custom.TLabel", anchor="w")
-        title_label.pack(fill="x", padx=5, pady=(5, 0))  # Only top padding
+        title_label.pack(fill="x", padx=50, pady=(5, 0))  # Only top padding
         
         separator = ttk.Separator(self, orient="horizontal")
-        separator.pack(fill="x", padx=5)  # Padding bottom only
+        separator.pack(fill="x", padx=50)  # Padding bottom only
         
         frame = ttk.Frame(self, style="Custom.TFrame")
-        frame.pack(fill='both', expand=True, padx=5, pady=(0, 5))
+        frame.pack(fill='both', expand=True, padx=50, pady=(0, 5))
 
         for i, option in enumerate(options):
             # Modifikacije za brisanje uz svaku opciju
@@ -254,13 +274,13 @@ class Application(tk.Tk):
     def create_option_frame(self, title, variable, options, type):
         
         title_label = ttk.Label(self, text=title, style="Custom.TLabel", anchor="w")
-        title_label.pack(fill="x", padx=5, pady=(5, 0))  # Only top padding
+        title_label.pack(fill="x", padx=50, pady=(5, 0))  # Only top padding
         
         separator = ttk.Separator(self, orient="horizontal")
-        separator.pack(fill="x", padx=5)  # Padding bottom only
+        separator.pack(fill="x", padx=50)  # Padding bottom only
         
         frame = ttk.Frame(self, style="Custom.TFrame")
-        frame.pack(fill='both', expand=True, padx=5, pady=(0, 5))
+        frame.pack(fill='both', expand=True, padx=50, pady=(0, 5))
         
         for i, option in enumerate(options):
             # Modifikacije za brisanje uz svaku opciju
@@ -281,13 +301,13 @@ class Application(tk.Tk):
     def create_sound_effects_frame(self, title, options):
         
         title_label = ttk.Label(self, text=title, style="Custom.TLabel", anchor="w")
-        title_label.pack(fill="x", padx=5, pady=(5, 0))  # Only top padding
+        title_label.pack(fill="x", padx=50, pady=(5, 0))  # Only top padding
         
         separator = ttk.Separator(self, orient="horizontal")
-        separator.pack(fill="x", padx=5)  # Padding bottom only
+        separator.pack(fill="x", padx=50)  # Padding bottom only
         
         frame = ttk.Frame(self, style="Custom.TFrame")
-        frame.pack(fill='both', expand=True, padx=5, pady=(0, 5))
+        frame.pack(fill='both', expand=True, padx=50, pady=(0, 5))
         
         for i, option in enumerate(options):
             # Modificirano za brisanje

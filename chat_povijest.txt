@@ -1,0 +1,15 @@
+Upit: yo 
+Hello! How can I assist you with your Dungeons and Dragons game today?
+
+--------------------------------------------------
+
+Upit:  
+No prompt provided!
+
+--------------------------------------------------
+
+Upit: fd 
+It seems like you might have entered an incomplete message. How can I help you with your Dungeons and Dragons game today?
+
+--------------------------------------------------
+
