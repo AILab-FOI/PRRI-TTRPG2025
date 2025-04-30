@@ -165,7 +165,20 @@ class Application(tk.Tk):
 
             os.makedirs(dest_dir, exist_ok=True)
             shutil.copy(file_path, dest)
+        if section_name in ["Characters", "NPCs", "Backgrounds"]:
+            try:
+                img = Image.open(dest)
 
+                max_sizes = {
+                    "Characters": (512, 768),
+                    "NPCs": (512, 512),
+                    "Backgrounds": (1280, 720)
+                }
+
+                max_size = max_sizes.get(section_name, (512, 512))
+                img.thumbnail(max_size, Image.LANCZOS)
+                img.save(dest)
+            except Exception as e: print(f"Greška pri resize-u slike: {e}")
 
         # Ovo slozi da bude checkbox
         if section_name in ["Characters", "NPCs"]:
