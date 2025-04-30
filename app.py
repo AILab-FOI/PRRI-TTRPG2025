@@ -89,36 +89,51 @@ class Application(tk.Tk):
         self.title("Game Configuration")
         self.config_data = config_data
 
+        # Učitavanje pozadine
         self.original_bg = Image.open("resursi_UI/pozadina.png")
         self.bg_image = ImageTk.PhotoImage(self.original_bg)
 
-        self.bg_label = tk.Label(self)
+        # Label za pozadinu
+        self.bg_label = tk.Label(self, image=self.bg_image)
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+        self.bg_label.image = self.bg_image 
 
+        # Bindowanje resize eventa
         self.bind("<Configure>", self._resize_background)
 
+        # Glavni frame (bijeli prozor iznad pozadine)
         self.main_frame = tk.Frame(self, bg="white")
         self.main_frame.pack(fill="both", expand=True)
 
+        # Varijable
         self.selected_scene = tk.StringVar()
         self.selected_show = {item: tk.BooleanVar() for item in config_data['NPCs'] + config_data['Characters']}
         self.selected_sound = ""
         self.selected_bgm = tk.StringVar()
 
+        # Slanje poruka
         self.send_window = None
         self.send_text_area = None
 
+        # Stil
         self.style = ttk.Style()
         self.style.theme_use('clam')
 
+        # UI elementi
         self.create_frames()
 
     def _resize_background(self, event):
-        new_width = event.width
-        new_height = event.height
-        resized = self.original_bg.resize((new_width, new_height), Image.LANCZOS)
-        self.bg_image = ImageTk.PhotoImage(resized)
-        self.bg_label.config(image=self.bg_image)
+        if self.bg_label.winfo_exists():
+            new_width = event.width
+            new_height = event.height
+
+            # Resize slike
+            resized = self.original_bg.resize((new_width, new_height), Image.LANCZOS)
+            self.bg_image = ImageTk.PhotoImage(resized)
+
+            # Postavljanje nove slike
+            self.bg_label.config(image=self.bg_image)
+            self.bg_label.image = self.bg_image 
 
     def save_to_history(self, question, answer):
      with open("chat_povijest.txt", "a", encoding="utf-8") as f:
