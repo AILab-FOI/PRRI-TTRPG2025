@@ -87,19 +87,11 @@ class Application(tk.Tk):
     def __init__(self, config_data):
         super().__init__()
         self.title("Game Configuration")
-        self.config_data = config_data
-
-        # Učitavanje pozadine
-        self.original_bg = Image.open("resursi_UI/pozadina.png")
-        self.bg_image = ImageTk.PhotoImage(self.original_bg)
-
-        # Label za pozadinu
-        self.bg_label = tk.Label(self, image=self.bg_image)
-        self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
-        self.bg_label.image = self.bg_image 
+        self.config_data = config_data 
 
         # Bindowanje resize eventa
-        self.bind("<Configure>", self._resize_background)
+        self._resize_job = None
+        self.bind("<Configure>", self._schedule_resize)
 
         # Glavni frame (bijeli prozor iznad pozadine)
         self.main_frame = tk.Frame(self, bg="white")
@@ -122,8 +114,14 @@ class Application(tk.Tk):
         # UI elementi
         self.create_frames()
 
+    def _schedule_resize(self, event):
+        if self._resize_job:
+            self.after_cancel(self._resize_job)
+        self._resize_job = self.after(100, lambda: self._resize_background(event))
+
     def _resize_background(self, event):
         if self.bg_label.winfo_exists():
+            print("resize")
             new_width = event.width
             new_height = event.height
 
@@ -236,6 +234,18 @@ class Application(tk.Tk):
             background="#282d39",
             foreground="#fbf9f5",
             font=("Arial", 10, 'bold'))
+        
+        print("ucitavanje pozadine...")
+        # Učitavanje pozadine
+        self.original_bg = Image.open("resursi_UI/pozadina.png")
+        self.bg_image = ImageTk.PhotoImage(self.original_bg)
+
+        print("ucitavanje pozadine2...")
+        # Label za pozadinu
+        self.bg_label = tk.Label(self, image=self.bg_image)
+        self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+        self.bg_label.image = self.bg_image
+        print("pozadina ucitana!")
         
         padding_frame = tk.Frame(self, height=10, width=1, bg=self["background"])
         padding_frame.pack(side="top", pady=65)
