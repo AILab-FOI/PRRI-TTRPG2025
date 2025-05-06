@@ -136,7 +136,7 @@ class Application(tk.Tk):
             self.bg_label.image = self.bg_image 
 
     def save_to_history(self, question, answer):
-     with open("chat_povijest.txt", "a", encoding="utf-8") as f:
+     with open("OpenAI/chat_povijest.txt", "a", encoding="utf-8") as f:
         f.write(f"Upit: {question} \n{answer}\n\n{'-'*50}\n\n")
 
     def refresh_ui(self):
@@ -215,7 +215,7 @@ class Application(tk.Tk):
         style.configure("Custom.TLabel", 
             background="#282d39", 
             foreground="#fbf9f5", 
-            font=("Arial", 14, "bold"))
+            font=("Arial", 24, "bold"))
         
         style.configure("Custom.TButton",
             background="#91b8db",
@@ -250,7 +250,7 @@ class Application(tk.Tk):
         bottom_frame = ttk.Frame(self, style="Custom.TFrame")
         bottom_frame.pack(side="bottom", fill="x", padx=50, pady=(10, 110))
 
-        label = ttk.Label(bottom_frame, text="Pitanje za AI:", style="Custom.TLabel")
+        label = ttk.Label(bottom_frame, text="Ask an Dungeon Master Assistent:", style="Custom.TLabel")
         label.pack(anchor="w", pady=(0, 5))
 
         self.text_input = tk.Text(bottom_frame, height=3, wrap="word")
@@ -440,11 +440,11 @@ class Application(tk.Tk):
             self.send_text_area.insert("end", reply)
 
     def load_previous_conversation(self):
-     if not os.path.exists("chat_povijest.txt"):
+     if not os.path.exists("OpenAI/chat_povijest.txt"):
          messagebox.showinfo("Povijest razgovora", "Još nema spremljenih razgovora.")
          return
 
-     with open("chat_povijest.txt", "r", encoding="utf-8") as f:
+     with open("OpenAI/chat_povijest.txt", "r", encoding="utf-8") as f:
         history = f.read()
 
      if self.send_window and self.send_window.winfo_exists():

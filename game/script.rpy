@@ -46,7 +46,6 @@ image zig_mali = "images/npcs/zig_mali.png"
 
 # Backgrounds
 image brod = "images/locations/brod.png"
-image code4 = "images/locations/code4.png"
 image dvor = "images/locations/dvor.png"
 image fridina_soba = "images/locations/fridina_soba.png"
 image glavni_trg = "images/locations/glavni_trg.png"
@@ -104,8 +103,6 @@ label next:
 
     if scn == "brod" and cscn != "brod":
         jump brod
-    if scn == "code4" and cscn != "code4":
-        jump code4
     if scn == "dvor" and cscn != "dvor":
         jump dvor
     if scn == "fridina_soba" and cscn != "fridina_soba":
@@ -224,13 +221,6 @@ label brod:
     $ pos = 0
     $ cshw = [ "", "", "" ]
     scene brod
-    jump next
-
-label code4:
-    $ cscn = "code4"
-    $ pos = 0
-    $ cshw = [ "", "", "" ]
-    scene code4
     jump next
 
 label dvor:
