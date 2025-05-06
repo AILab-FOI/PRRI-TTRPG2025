@@ -451,7 +451,7 @@ class Application(tk.Tk):
             self.send_text_area.delete('1.0','end')
             self.send_text_area.insert('1.0', data)
         else:
-            messagebox.showinfo("Povijest", "Nema istorije.")
+            messagebox.showinfo("Povijest", "Nema povijesti razgovora.")
 
     def _clear_history(self):
         open("OpenAI/chat_povijest.txt","w").close()
