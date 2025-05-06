@@ -403,7 +403,7 @@ class Application(tk.Tk):
         canvas.create_image(0,0, image=bg_photo, anchor='nw')
         self.send_window.bg_photo = bg_photo
 
-        margin = 100
+        margin = 350
         frame_w = main_w - margin
         frame_h = main_h - margin
         frame = ttk.Frame(canvas)
