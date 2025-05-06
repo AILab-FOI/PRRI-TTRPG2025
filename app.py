@@ -246,31 +246,19 @@ class Application(tk.Tk):
         self.create_sound_effects_frame("Sound effects", self.config_data['Sound effects'])
         self.create_option_frame("Background music", self.selected_bgm, self.config_data['Background music'], "*.mp3")
 
-        # Bottom frame
+        # AI assistent frame
         bottom_frame = ttk.Frame(self, style="Custom.TFrame")
         bottom_frame.pack(side="bottom", fill="x", padx=50, pady=(10, 110))
 
-        label = ttk.Label(bottom_frame, text="Ask an Dungeon Master Assistent:", style="Custom.TLabel")
+        label = ttk.Label(bottom_frame, text="Ask Dungeon Master Assistent", style="Custom.TLabel")
         label.pack(anchor="w", pady=(0, 5))
 
-        self.text_input = tk.Text(bottom_frame, height=3, wrap="word")
-        self.text_input.pack(side="left", expand=True, fill="both", padx=(0, 10))
-
-        scrollbar = ttk.Scrollbar(bottom_frame, orient="vertical", command=self.text_input.yview)
-        scrollbar.pack(side="right", fill="y")
-
-        self.text_input.configure(yscrollcommand=scrollbar.set)
-
-
-        send_button = ttk.Button(bottom_frame, text="Send", command=self.on_send,  style="Custom.TButton")
-        send_button.pack(side="right")
+        send_button = ttk.Button(bottom_frame, text="Open Chat", command=self.on_send,  style="Custom.TButton")
+        send_button.pack(side="left")
 
         # OK Button
         ttk.Button(self, text="OK", command=self.on_ok, style="Custom.TButton").pack(side="left", padx=(50, 5))
         ttk.Button(self, text="Run game", command=self.on_run, style="Custom.TButton").pack(side="left", padx=5)
-
-        ucitaj_button = ttk.Button(self, text="Učitaj prijašnji razgovor", command=self.load_previous_conversation, style="Custom.TButton")
-        ucitaj_button.pack(side="left", padx=5)
 
     def create_check_frame(self, title, variable_dict, options):
         
@@ -375,114 +363,93 @@ class Application(tk.Tk):
     
     def on_send(self):
         global api_key
-
+        # Ask for key if needed
         if not api_key:
             api_key = OpenAIChat.ask_for_api_key(self)
-            save_api_key(api_key)
+            with open('config.json','w') as f: json.dump({'api_key':api_key}, f)
 
-        chat = OpenAIChat(api_key)
-
-        tekstZaGpt = self.text_input.get("1.0", "end").strip()
-        reply = chat.send_message(tekstZaGpt)
-
-        self.save_to_history(tekstZaGpt, reply)
-        
-        if not tekstZaGpt:
-            return  # ne radi ništa ako je polje prazno (mora bit tu inače ne radi?!) 
-        
+        prompt = None
+        # If chat window exists, gather prompt; else create window then return
         if self.send_window and self.send_window.winfo_exists():
-            # Ako prozor već postoji, dodaj novi tekst i zadrži stari
-            self.send_text_area.insert("end", f"\n\nUpit: {tekstZaGpt}")
-            self.send_text_area.insert("end", f"\n{reply}")
-            self.send_text_area.see("end")  # scroll na dno kad se refresha
-            self.text_input.delete("1.0", "end") #briše upit u text boxu
+            prompt = self.text_input.get("1.0","end").strip()
         else:
-            # Otvori novi prozor
-            self.send_window = tk.Toplevel(self)
-            self.send_window.title("Odgovor AI-a")
-            self.send_window.geometry("800x600")
-            self.text_input.delete("1.0", "end")
-            self.send_window.resizable(False, False)  #sprječava resize
+            self._build_chat_window()
+            return  # wait for next click
 
-           #učitavanje slike (bilo bi dobro da ostane di je)
-            bg_image = Image.open("resursi_UI/OkvirOdgovor.webp")
-            try:
-             resample_filter = Image.Resampling.LANCZOS
-            except AttributeError:
-              resample_filter = Image.ANTIALIAS  #ako slučajno nema dobru vezciju iz PIL
-            bg_image = bg_image.resize((800, 600), resample_filter)
-            bg_photo = ImageTk.PhotoImage(bg_image)
+        if not prompt: return
+        chat = OpenAIChat(api_key)
+        reply = chat.send_message(prompt)
+        self._append_to_chat(prompt, reply)
 
-          # Canvas i slika
-            canvas = tk.Canvas(self.send_window, width=800, height=600, highlightthickness=0)
-            canvas.pack(fill="both", expand=True)
-            canvas.create_image(0, 0, image=bg_photo, anchor="nw")
-            self.send_window.bg_photo = bg_photo
+    def _build_chat_window(self):
+        main_w = self.winfo_width()
+        main_h = self.winfo_height()
+        self.send_window = tk.Toplevel(self)
+        self.send_window.title("AI Assistant Chat")
+        self.send_window.geometry(f"{main_w}x{main_h}")
+        self.send_window.resizable(False, False)
 
-         # Frame unutar canvasa za sadržaj, centriran
-            frame = ttk.Frame(canvas)
-            canvas.create_window(400, 300, window=frame, anchor="center", width=535, height=410)  
+        bg = Image.open("resursi_UI/OkvirOdgovor.webp")
+        bg = bg.resize((main_w, main_h), Image.LANCZOS)
+        bg_photo = ImageTk.PhotoImage(bg)
+        canvas = tk.Canvas(self.send_window, width=main_w, height=main_h, highlightthickness=0)
+        canvas.pack(fill='both', expand=True)
+        canvas.create_image(0,0, image=bg_photo, anchor='nw')
+        self.send_window.bg_photo = bg_photo
 
-         # Scrollbar i text area
-            scrollbar = ttk.Scrollbar(frame)
-            scrollbar.pack(side="right", fill="y")
+        margin = 100
+        frame_w = main_w - margin
+        frame_h = main_h - margin
+        frame = ttk.Frame(canvas)
+        canvas.create_window(main_w//2, main_h//2, window=frame, anchor='center', width=frame_w, height=frame_h)
 
-            self.send_text_area = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
-            self.send_text_area.pack(side="left", fill="both", expand=True)
-            scrollbar.config(command=self.send_text_area.yview)
+        # Chat display area 
+        resp_scroll = ttk.Scrollbar(frame)
+        resp_scroll.pack(side='right', fill='y', pady=(6,0), padx=(0,4))
+        chat_height = 14
+        self.send_text_area = tk.Text(frame, height=chat_height, wrap='word', yscrollcommand=resp_scroll.set)
+        self.send_text_area.pack(fill='both', expand=True, padx=6, pady=(6,0))
+        resp_scroll.config(command=self.send_text_area.yview)
+        self.send_text_area.tag_configure('bold', font=("TkDefaultFont",10,'bold'))
 
-            #tag za boldani tekst
-            self.send_text_area.tag_configure("bold", font=("TkDefaultFont", 10, "bold"))
+        # Bottom input and controls
+        bottom = ttk.Frame(frame)
+        bottom.pack(fill='x', pady=6, padx=6)
 
-           #tekst s tagovima
-            self.send_text_area.insert("1.0", "\n" + "Upit: ")
-            self.send_text_area.insert("end", tekstZaGpt + "\n")
-            self.send_text_area.insert("end", reply)
+        # Input box 
+        input_lines = 3
+        self.text_input = tk.Text(bottom, height=input_lines, wrap='word')
+        self.text_input.pack(side='left', fill='x', expand=True, pady=(0,4))
+
+        send_btn = ttk.Button(bottom, text='Send', command=self.on_send, style='Custom.TButton')
+        send_btn.pack(side='right', padx=(4,0), pady=(0,4))
+
+        # History controls 
+        hist_frame = ttk.Frame(frame)
+        hist_frame.pack(side='bottom', fill='x', padx=6, pady=(0,6))
+        ttk.Button(hist_frame, text='Load History', command=self.load_previous_conversation, style='Custom.TButton').pack(side='left')
+        ttk.Button(hist_frame, text='Clear History', command=self._clear_history, style='Custom.TButton').pack(side='left', padx=(4,0))
+
+    def _append_to_chat(self, prompt, reply):
+        self.send_text_area.insert('end', f"\n\nUpit: {prompt}\n", 'bold')
+        self.send_text_area.insert('end', reply)
+        self.send_text_area.see('end')
+        self.text_input.delete('1.0','end')
+        with open("OpenAI/chat_povijest.txt","a",encoding='utf-8') as f:
+            f.write(f"Upit: {prompt}\n{reply}\n{'-'*40}\n")
 
     def load_previous_conversation(self):
-     if not os.path.exists("OpenAI/chat_povijest.txt"):
-         messagebox.showinfo("Povijest razgovora", "Još nema spremljenih razgovora.")
-         return
+        if os.path.exists("OpenAI/chat_povijest.txt"):
+            with open("OpenAI/chat_povijest.txt","r",encoding='utf-8') as f:
+                data = f.read()
+            self.send_text_area.delete('1.0','end')
+            self.send_text_area.insert('1.0', data)
+        else:
+            messagebox.showinfo("Povijest", "Nema istorije.")
 
-     with open("OpenAI/chat_povijest.txt", "r", encoding="utf-8") as f:
-        history = f.read()
-
-     if self.send_window and self.send_window.winfo_exists():
-        self.send_text_area.insert("1.0", history + "\n\n")
-        self.send_text_area.see("end")
-     else:
-         self.send_window = tk.Toplevel(self)
-         self.send_window.title("Odgovor AI-a")
-         self.send_window.geometry("800x600")
-         self.send_window.resizable(False, False)
-
-         bg_image = Image.open("resursi_UI/OkvirOdgovor.webp")
-         try:
-             resample_filter = Image.Resampling.LANCZOS
-         except AttributeError:
-             resample_filter = Image.ANTIALIAS
-         bg_image = bg_image.resize((800, 600), resample_filter)
-         bg_photo = ImageTk.PhotoImage(bg_image)
- 
-         canvas = tk.Canvas(self.send_window, width=800, height=600, highlightthickness=0)
-         canvas.pack(fill="both", expand=True)
-         canvas.create_image(0, 0, image=bg_photo, anchor="nw")
-         self.send_window.bg_photo = bg_photo
-
-         frame = ttk.Frame(canvas)
-         canvas.create_window(400, 300, window=frame, anchor="center", width=535, height=410)
-
-         scrollbar = ttk.Scrollbar(frame)
-         scrollbar.pack(side="right", fill="y")
-
-         self.send_text_area = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
-         self.send_text_area.pack(side="left", fill="both", expand=True)
-         scrollbar.config(command=self.send_text_area.yview)
-
-         self.send_text_area.tag_configure("bold", font=("TkDefaultFont", 10, "bold"))
-
-         self.send_text_area.insert("1.0", history + "\n\n")
-
+    def _clear_history(self):
+        open("OpenAI/chat_povijest.txt","w").close()
+        self.send_text_area.delete('1.0','end')
 
     # Brisanje fajlova
     def remove_item_from_section(self, section_name, item_name):
