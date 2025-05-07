@@ -178,19 +178,33 @@ class Application(tk.Tk):
             os.makedirs(dest_dir, exist_ok=True)
             shutil.copy(file_path, dest)
         if section_name in ["Characters", "NPCs", "Backgrounds"]:
-            try:
-                img = Image.open(dest)
+                try:
+                    img = Image.open(dest)
 
-                max_sizes = {
-                    "Characters": (512, 768),
-                    "NPCs": (512, 512),
-                    "Backgrounds": (1280, 720)
-                }
+                    if section_name == "Backgrounds":
+                        # Ukloni transparentnost ako postoji
+                        if img.mode in ("RGBA", "LA"):
+                            background = Image.new("RGB", img.size, (255, 255, 255))  # bijela pozadina
+                            background.paste(img, mask=img.split()[3])  # koristi alpha kanal kao masku
+                            img = background
+                        else:
+                            img = img.convert("RGB")
 
-                max_size = max_sizes.get(section_name, (512, 512))
-                img.thumbnail(max_size, Image.LANCZOS)
-                img.save(dest)
-            except Exception as e: print(f"Greška pri resize-u slike: {e}")
+                        # Prisilno skaliranje na 1280x720 bez zadržavanja omjera
+                        img = img.resize((1280, 720), Image.LANCZOS)
+                    else:
+                        # Ostale sekcije (Characters i NPCs) zadrže omjer
+                        max_sizes = {
+                            "Characters": (512, 512),
+                            "NPCs": (512, 512)
+                        }
+                        max_size = max_sizes.get(section_name, (512, 512))
+                        img.thumbnail(max_size, Image.LANCZOS)
+
+                    img.save(dest)
+
+                except Exception as e:
+                    print(f"Greška pri resize-u slike: {e}")
 
         # Ovo slozi da bude checkbox
         if section_name in ["Characters", "NPCs"]:
