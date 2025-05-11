@@ -406,11 +406,11 @@ class Application(tk.Tk):
         main_h = self.winfo_height()
         self.send_window = tk.Toplevel(self)
         self.send_window.title("AI Assistant Chat")
-        self.send_window.geometry(f"{main_w}x{main_h}")
+        self.send_window.geometry(f"{main_w-150}x{main_h-150}")
         self.send_window.resizable(False, False)
 
         bg = Image.open("resursi_UI/OkvirOdgovor.webp")
-        bg = bg.resize((main_w, main_h), Image.LANCZOS)
+        bg = bg.resize(((main_w-150), (main_h-150)), Image.LANCZOS)
         bg_photo = ImageTk.PhotoImage(bg)
         canvas = tk.Canvas(self.send_window, width=main_w, height=main_h, highlightthickness=0)
         canvas.pack(fill='both', expand=True)
@@ -418,10 +418,10 @@ class Application(tk.Tk):
         self.send_window.bg_photo = bg_photo
 
         margin = 350
-        frame_w = main_w - margin
-        frame_h = main_h - margin
+        frame_w = main_w - margin -150
+        frame_h = main_h - margin -120
         frame = ttk.Frame(canvas)
-        canvas.create_window(main_w//2, main_h//2, window=frame, anchor='center', width=frame_w, height=frame_h)
+        canvas.create_window(main_w//2.2, main_h//2.3, window=frame, anchor='center', width=frame_w, height=frame_h)
 
         # Chat display area 
         resp_scroll = ttk.Scrollbar(frame)
