@@ -260,6 +260,9 @@ class Application(tk.Tk):
         padding_frame = tk.Frame(self, height=10, width=1, bg=self["background"])
         padding_frame.pack(side="top", pady=65)
         
+        ttk.Button(self, text="OK", command=self.on_ok, style="Custom.TButton").pack(side="top", padx=(50, 5))
+        ttk.Button(self, text="Run game", command=self.on_run, style="Custom.TButton").pack(side="top", padx=5)
+        
         self.create_option_frame("Backgrounds", self.selected_scene, self.config_data['Backgrounds'], "*.png")
         self.create_check_frame("Characters", self.selected_show, self.config_data['Characters'])
         self.create_check_frame("NPCs", self.selected_show, self.config_data['NPCs'])
@@ -277,8 +280,7 @@ class Application(tk.Tk):
         send_button.pack(side="left")
 
         # OK Button
-        ttk.Button(self, text="OK", command=self.on_ok, style="Custom.TButton").pack(side="left", padx=(50, 5))
-        ttk.Button(self, text="Run game", command=self.on_run, style="Custom.TButton").pack(side="left", padx=5)
+
 
     def create_check_frame(self, title, variable_dict, options):
         
@@ -372,14 +374,19 @@ class Application(tk.Tk):
 
     def on_run(self):
         
-        renpy_path = create_config.get_or_select_renpy_path()
+        if sys.platform.startswith("win"):
+            renpy_path = "../renpy-8.3.7-sdk/renpy.exe"
+        else:
+            renpy_path = "../renpy-8.3.7-sdk/renpy.sh"
+ 
+    #    renpy_path = create_config.get_or_select_renpy_path()
         current_dir = os.getcwd()
 
         if renpy_path:
             print(f"Pokretanje Ren'Pya s: {renpy_path}")
             subprocess.Popen([renpy_path, current_dir])
-        else:
-            messagebox.showerror("Greška", "RenPy nije odabran. Igra se neće pokrenuti.")
+    #    else:
+    #        messagebox.showerror("Greška", "RenPy nije odabran. Igra se neće pokrenuti.")
     
     def on_send(self):
         global api_key
@@ -514,6 +521,7 @@ def regenerate_config(overwrite=True):
     # Optional: Extract components (use them or return them)
     characters = data["Characters"]
     npcs = data["NPCs"]
+    
     sound_effects = data["Sound effects"]
     backgrounds = data["Backgrounds"]
     bgms = data["Background music"]
