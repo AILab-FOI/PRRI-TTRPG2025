@@ -260,9 +260,21 @@ class Application(tk.Tk):
         padding_frame = tk.Frame(self, height=10, width=1, bg=self["background"])
         padding_frame.pack(side="top", pady=65)
 
-        # Frame na desnoj polovici (po x osi) i centriran po visini
-        button_frame1 = ttk.Frame(self, style="Custom.TFrame")
-        button_frame1.place(relx=0.75, rely=0.1, anchor="center") # Direktno na 300px od lijevog ruba, 100px od vrha
+        # Glavni frame koji drži sve
+        main_frame = ttk.Frame(self, style="Custom.TFrame")
+        main_frame.place(relx=0.1, rely=0.1, anchor="w")
+
+        # Frame za tekst (naslov aplikacije)
+        title_frame = ttk.Frame(main_frame, style="Custom.TFrame")
+        title_frame.pack(side="left", padx=(0,0))
+
+        # Dodaj tekst (naslov aplikacije)
+        title_label = ttk.Label(title_frame, text="TT Game Master Assistant", style="Custom.TLabel")
+        title_label.pack()
+
+        # Frame za gumbe
+        button_frame1 = ttk.Frame(main_frame, style="Custom.TFrame")
+        button_frame1.pack(side="right", padx=(400, 0))
 
         # Dodaj gumbe
         btn_ok = ttk.Button(button_frame1, text="OK", command=self.on_ok, style="Custom.TButton")
