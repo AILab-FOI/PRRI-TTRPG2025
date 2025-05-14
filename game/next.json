@@ -1,8 +1,6 @@
 {
-    "scene": "nastamba_maga",
-    "show": [
-        "profesor_sipa_tintic"
-    ],
+    "scene": "",
+    "show": [],
     "sound": "",
-    "bgm": "_silence"
+    "bgm": ""
 }

@@ -259,6 +259,18 @@ class Application(tk.Tk):
         
         padding_frame = tk.Frame(self, height=10, width=1, bg=self["background"])
         padding_frame.pack(side="top", pady=65)
+
+        # Frame na desnoj polovici (po x osi) i centriran po visini
+        button_frame1 = ttk.Frame(self, style="Custom.TFrame")
+        button_frame1.place(relx=0.75, rely=0.1, anchor="center") # Direktno na 300px od lijevog ruba, 100px od vrha
+
+        # Dodaj gumbe
+        btn_ok = ttk.Button(button_frame1, text="OK", command=self.on_ok, style="Custom.TButton")
+        btn_ok.pack(side="left", padx=5)
+
+        btn_run = ttk.Button(button_frame1, text="Run game", command=self.on_run, style="Custom.TButton")
+        btn_run.pack(side="left", padx=5)
+
         
         self.create_option_frame("Backgrounds", self.selected_scene, self.config_data['Backgrounds'], "*.png")
         self.create_check_frame("Characters", self.selected_show, self.config_data['Characters'])
@@ -275,10 +287,6 @@ class Application(tk.Tk):
 
         send_button = ttk.Button(bottom_frame, text="Open Chat", command=self.on_send,  style="Custom.TButton")
         send_button.pack(side="left")
-
-        # OK Button
-        ttk.Button(self, text="OK", command=self.on_ok, style="Custom.TButton").pack(side="left", padx=(50, 5))
-        ttk.Button(self, text="Run game", command=self.on_run, style="Custom.TButton").pack(side="left", padx=5)
 
     def create_check_frame(self, title, variable_dict, options):
         
