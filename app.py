@@ -259,6 +259,30 @@ class Application(tk.Tk):
         
         padding_frame = tk.Frame(self, height=10, width=1, bg=self["background"])
         padding_frame.pack(side="top", pady=65)
+
+        # Glavni frame koji drži sve
+        main_frame = ttk.Frame(self, style="Custom.TFrame")
+        main_frame.place(relx=0.1, rely=0.1, anchor="w")
+
+        # Frame za tekst (naslov aplikacije)
+        title_frame = ttk.Frame(main_frame, style="Custom.TFrame")
+        title_frame.pack(side="left", padx=(0,0))
+
+        # Dodaj tekst (naslov aplikacije)
+        title_label = ttk.Label(title_frame, text="TT Game Master Assistant", style="Custom.TLabel")
+        title_label.pack()
+
+        # Frame za gumbe
+        button_frame1 = ttk.Frame(main_frame, style="Custom.TFrame")
+        button_frame1.pack(side="right", padx=(400, 0))
+
+        # Dodaj gumbe
+        btn_ok = ttk.Button(button_frame1, text="OK", command=self.on_ok, style="Custom.TButton")
+        btn_ok.pack(side="left", padx=5)
+
+        btn_run = ttk.Button(button_frame1, text="Run game", command=self.on_run, style="Custom.TButton")
+        btn_run.pack(side="left", padx=5)
+
         
         ttk.Button(self, text="OK", command=self.on_ok, style="Custom.TButton").pack(side="top", padx=(50, 5))
         ttk.Button(self, text="Run game", command=self.on_run, style="Custom.TButton").pack(side="top", padx=5)
@@ -413,11 +437,11 @@ class Application(tk.Tk):
         main_h = self.winfo_height()
         self.send_window = tk.Toplevel(self)
         self.send_window.title("AI Assistant Chat")
-        self.send_window.geometry(f"{main_w}x{main_h}")
+        self.send_window.geometry(f"{main_w-150}x{main_h-150}")
         self.send_window.resizable(False, False)
 
         bg = Image.open("resursi_UI/OkvirOdgovor.webp")
-        bg = bg.resize((main_w, main_h), Image.LANCZOS)
+        bg = bg.resize(((main_w-150), (main_h-150)), Image.LANCZOS)
         bg_photo = ImageTk.PhotoImage(bg)
         canvas = tk.Canvas(self.send_window, width=main_w, height=main_h, highlightthickness=0)
         canvas.pack(fill='both', expand=True)
@@ -425,10 +449,10 @@ class Application(tk.Tk):
         self.send_window.bg_photo = bg_photo
 
         margin = 350
-        frame_w = main_w - margin
-        frame_h = main_h - margin
+        frame_w = main_w - margin -150
+        frame_h = main_h - margin -120
         frame = ttk.Frame(canvas)
-        canvas.create_window(main_w//2, main_h//2, window=frame, anchor='center', width=frame_w, height=frame_h)
+        canvas.create_window(main_w//2.2, main_h//2.3, window=frame, anchor='center', width=frame_w, height=frame_h)
 
         # Chat display area 
         resp_scroll = ttk.Scrollbar(frame)
