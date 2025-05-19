@@ -257,7 +257,7 @@ class Application(tk.Tk):
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
         self.bg_label.image = self.bg_image
         
-        padding_frame = tk.Frame(self, height=10, width=1, bg=self["background"])
+        padding_frame = ttk.Frame(self, style="Custom.TFrame", height=10, width=1)
         padding_frame.pack(side="top", pady=65)
 
         # Glavni frame koji drži sve
@@ -282,10 +282,6 @@ class Application(tk.Tk):
 
         btn_run = ttk.Button(button_frame1, text="Run game", command=self.on_run, style="Custom.TButton")
         btn_run.pack(side="left", padx=5)
-
-        
-        ttk.Button(self, text="OK", command=self.on_ok, style="Custom.TButton").pack(side="top", padx=(50, 5))
-        ttk.Button(self, text="Run game", command=self.on_run, style="Custom.TButton").pack(side="top", padx=5)
         
         self.create_option_frame("Backgrounds", self.selected_scene, self.config_data['Backgrounds'], "*.png")
         self.create_check_frame("Characters", self.selected_show, self.config_data['Characters'])
