@@ -500,6 +500,9 @@ class Application(tk.Tk):
 
     # Brisanje fajlova
     def remove_item_from_section(self, section_name, item_name):
+        confirm = messagebox.askyesno("Potvrda brisanja", f"Jeste li sigurni da želite obrisati '{item_name}' iz sekcije '{section_name}'?")
+        if not confirm:
+            return
         if item_name in self.config_data[section_name]:
             self.config_data[section_name].remove(item_name)
 
