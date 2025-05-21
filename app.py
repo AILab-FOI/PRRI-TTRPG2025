@@ -1,22 +1,16 @@
 import tkinter as tk
 import json
 from tkinter import ttk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 import shutil
 import pygame
 import os
 import subprocess
 from OpenAI.OpenAI import OpenAIChat
-
 from PIL import Image, ImageTk
 import create_config
 import generate
-
 import sys
-from tkinter import messagebox, filedialog
-
-import os
-from tkinter import messagebox
 
 # Initialize the pygame mixer
 pygame.mixer.init()
@@ -81,15 +75,16 @@ def load_image():
     resized_img = img.resize((20, 20))
     photo["trash"] = ImageTk.PhotoImage(resized_img)
 
-
 # Main GUI Application
 class Application(tk.Tk):
     def __init__(self, config_data):
         super().__init__()
-        self.title("Game Configuration")
+        self.title("TTRPG Game Master Assistant")
         self.config_data = config_data 
+        
+        self.minsize(1300, 800)
 
-        # Bindowanje resize eventa
+        # Bindovanje resize eventa
         self._resize_job = None
         self.bind("<Configure>", self._schedule_resize)
 
@@ -269,7 +264,7 @@ class Application(tk.Tk):
         title_frame.pack(side="left", padx=(0,0))
 
         # Dodaj tekst (naslov aplikacije)
-        title_label = ttk.Label(title_frame, text="TT Game Master Assistant", style="Custom.TLabel")
+        title_label = ttk.Label(title_frame, text="TTRPG Game Master Assistant", style="Custom.TLabel")
         title_label.pack()
 
         # Frame za gumbe

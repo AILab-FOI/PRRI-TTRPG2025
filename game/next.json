@@ -1,6 +1,8 @@
 {
-    "scene": "",
-    "show": [],
+    "scene": "test_location",
+    "show": [
+        "test_character"
+    ],
     "sound": "",
     "bgm": ""
 }
